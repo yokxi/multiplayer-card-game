@@ -13,11 +13,10 @@
         }
         body { display: flex; flex-direction: row; }
         
-        /* --- NUOVA PALETTE: "Vintage Modern" --- */
         
         #zona-giocatori-sidebar {
             flex: 0 0 280px; 
-            background-color: #4E443A; /* Sfondo Sidebar */
+            background-color: #4E443A;
             color: white; padding: 20px; height: 100vh;
             box-shadow: 2px 0 5px rgba(0,0,0,0.1);
             overflow-y: auto; box-sizing: border-box;
@@ -33,11 +32,11 @@
             margin-bottom: 20px;
         }
         .giocatore-sidebar-item {
-            background-color: #6B5E51; /* Elementi Sidebar */
+            background-color: #6B5E51; 
             padding: 12px 15px;
             border-radius: 8px;
             margin-bottom: 10px;
-            border: 2px solid #4E443A; /* Sfondo Sidebar */
+            border: 2px solid #4E443A; 
             transition: all 0.3s ease; 
             text-align: center;
         }
@@ -54,7 +53,7 @@
         }
         
         .giocatore-sidebar-item.tu {
-            background-color: #A38D6F; /* Colore "Tu" (Beige) */
+            background-color: #A38D6F; 
             border-color: #A38D6F;
         }
         .giocatore-sidebar-item.in-attesa {
@@ -63,11 +62,11 @@
             border-color: #6B5E51;
         }
         .giocatore-sidebar-item.ha-giocato {
-            background-color: #798A74; /* Colore "Ha Giocato" (Verde oliva) */
+            background-color: #798A74; 
             border-color: #A38D6F;
         }
         .giocatore-sidebar-item.master-turno {
-            border-color: #E0C097; /* Colore Master (Crema/Sabbia) */
+            border-color: #E0C097; 
         }
         .giocatore-sidebar-item.master-turno.tu {
             background-color: #A38D6F;
@@ -83,7 +82,7 @@
         #titolo-gioco {
             font-family: 'Impact', 'Arial Black', sans-serif;
             font-size: 6em;
-            color: #A38D6F; /* Colore "Tu" (Beige) */
+            color: #A38D6F; 
             text-shadow: 4px 4px 6px rgba(0, 0, 0, 0.4), 
                          -4px -4px 6px rgba(255, 255, 255, 0.2);
             text-align: center;
@@ -102,7 +101,7 @@
         
         #zona-profilo-giocatore {
             background-color: #fff;
-            border: 2px solid #A38D6F; /* Colore "Tu" (Beige) */
+            border: 2px solid #A38D6F; 
             padding: 20px;
             margin: 20px auto;
             max-width: 600px;
@@ -119,7 +118,7 @@
             align-items: center;
             font-size: 1.5em;
             font-weight: bold;
-            color: #A38D6F; /* Colore "Tu" (Beige) */
+            color: #A38D6F; 
         }
         .profilo-edit-icon {
             font-size: 0.8em;
@@ -135,7 +134,7 @@
             font-family: Arial, sans-serif;
             font-size: 1.5em;
             font-weight: bold;
-            color: #A38D6F; /* Colore "Tu" (Beige) */
+            color: #A38D6F; 
             border: none;
             border-bottom: 2px solid #ccc;
             background: none;
@@ -145,7 +144,7 @@
         }
         #profilo-nome-input:focus {
             outline: none;
-            border-bottom: 2px solid #A38D6F; /* Colore "Tu" (Beige) */
+            border-bottom: 2px solid #A38D6F; /
         }
         
         #zona-lobby {
@@ -155,34 +154,35 @@
         }
         #zona-lobby h3 { margin-top: 0; }
         
+        
         #btn-inizia {
             font-size: 20px; padding: 15px 30px; cursor: pointer;
-            background-color: #A38D6F; /* Colore "Tu" (Beige) */
+            background-color: #A38D6F; 
             color: white; border: none;
             border-radius: 5px;
-            display: block;
+            display: block; 
             margin: 20px auto;
         }
         #btn-inizia:hover { 
-            background-color: #8D7B60; /* Beige più scuro */
+            background-color: #8D7B60; 
         }
         
         #btn-attiva-scelta {
             font-size: 18px; padding: 12px 25px; cursor: pointer;
-            background-color: #E0C097; /* Colore Master (Crema/Sabbia) */
-            color: #4E443A; /* Testo scuro per bottone chiaro */
+            background-color: #E0C097; 
+            color: #4E443A; 
             border: none;
             border-radius: 5px; margin: 20px auto;
             display: none;
         }
         #btn-attiva-scelta:hover { 
-            background-color: #CDB38B; /* Crema/Sabbia più scuro */
+            background-color: #CDB38B; 
         }
 
         #area-gioco { margin-top: 20px; max-width: 900px; margin-left: auto; margin-right: auto;}
         #zona-master {
             background-color: #fff8e1; padding: 15px; border-radius: 8px;
-            border: 2px solid #E0C097; /* Colore Master (Crema/Sabbia) */
+            border: 2px solid #E0C097; 
             font-size: 1.2em; font-weight: bold;
             display: none; max-width: 600px; margin: 20px auto;
         }
@@ -213,7 +213,7 @@
         .carta-coperta.cliccabile:hover {
             transform: translateY(-5px);
             box-shadow: 0 6px 12px rgba(0,0,0,0.15); 
-            border-color: #E0C097; /* Colore Master (Crema/Sabbia) */
+            border-color: #E0C097; 
         }
         .carta-bianca {
             background-color: white; color: #222; border: 1px solid #ccc;
@@ -226,12 +226,12 @@
         .carta-giocabile:hover {
             transform: translateY(-5px) scale(1.05);
             box-shadow: 0 6px 12px rgba(0,0,0,0.15); 
-            border-color: #A38D6F; /* Colore "Tu" (Beige) */
+            border-color: #A38D6F; 
         }
         .carta-scelta {
-            background-color: #f7f2ed; /* Sfondo Beige chiaro */
+            background-color: #f7f2ed; 
             color: #222; 
-            border: 2px dashed #A38D6F; /* Colore "Tu" (Beige) */
+            border: 2px dashed #A38D6F; 
             border-radius: 10px; padding: 20px 15px; font-size: 1.1em;
             font-weight: 500; width: 150px; min-height: 180px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex;
@@ -244,7 +244,7 @@
             background-color: #e6e0d9;
         }
         .carta-vincitrice {
-            border: 4px solid #E0C097; /* Colore Master (Crema/Sabbia) */
+            border: 4px solid #E0C097; 
             transform: scale(1.05);
             box-shadow: 0 8px 16px rgba(0,0,0,0.2);
         }
@@ -321,7 +321,6 @@
         const profiloEditIcon = document.getElementById('profilo-edit-icon');
         const profiloNomeInput = document.getElementById('profilo-nome-input');
 
-        // Stato locale
         let mioRuolo = { isMaster: false };
         let mioStato = { inAttesa: false }; 
         let listaGiocatoriLocale = []; 
@@ -353,7 +352,6 @@
             profiloEditIcon.textContent = '✏️';
         }
 
-        // --- GESTIONE CONNESSIONE ---
         socket.on('connect', () => {
             statoConnessioneEl.style.display = 'none';
         });
@@ -407,8 +405,6 @@
             }
         });
 
-
-        // --- GESTIONE LISTA GIOCATORI ---
         socket.on('aggiorna-lista-giocatori', (data) => {
             const { giocatori, hostID, partitaInCorso } = data;
             listaGiocatoriLocale = giocatori; 
@@ -483,9 +479,6 @@
             }
         });
 
-        // -----------------------------------------------------------------
-        // 🃏 LOGICA DI GIOCO
-        // -----------------------------------------------------------------
         socket.on('nuovo-turno', (dati) => {
             masterCorrenteID = dati.masterID;
             
@@ -630,10 +623,10 @@
             const nomeVincitore = getNomeGiocatore(dati.vincitoreID); 
             if (dati.vincitoreID === socket.id) {
                 messaggio = "You won this round! You are the new Master.";
-                zonaMaster.style.borderColor = '#E0C097'; /* Colore Master (Crema/Sabbia) */
+                zonaMaster.style.borderColor = '#E0C097';
             } else {
                 messaggio = `Player ${nomeVincitore} won! They are the next Master.`; 
-                zonaMaster.style.borderColor = '#E0C097'; /* Colore Master (Crema/Sabbia) */
+                zonaMaster.style.borderColor = '#E0C097'; 
             }
             zonaMaster.textContent = messaggio;
             zonaMaster.style.display = 'block';

@@ -21,7 +21,7 @@ function mischiaMazzo(mazzo) {
 }
 
 let statoPartita = {
-    giocatori: {},
+    giocatori: {}, 
     mazzoNero: [],
     mazzoBianco: [],
     carteScartateBianche: [],
@@ -80,14 +80,14 @@ io.on('connection', (socket) => {
     };
     playerCounter++; 
     
-    aggiornaELinviaListaGiocatori();
+    aggiornaELinviaListaGiocatori(); 
 
     socket.on('disconnect', () => {
         console.log(`😢 A player disconnected: ${socket.id}`);
         delete statoPartita.giocatori[socket.id];
         
         if (Object.keys(statoPartita.giocatori).length === 0) {
-            playerCounter = 1;
+            playerCounter = 1; 
         }
         
         aggiornaELinviaListaGiocatori(); 
@@ -264,5 +264,6 @@ io.on('connection', (socket) => {
 });
 
 server.listen(PORTA, () => {
-    console.log(`🚀 Open http://localhost:${PORTA} in your browser to play`);
+    console.log(`🚀 Server listening on port ${PORTA}`);
+    console.log(`Open http://localhost:${PORTA} in your browser to play!`);
 });
