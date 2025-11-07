@@ -1,0 +1,21 @@
+{
+  "name": "multiplayer-card-game",
+  "version": "1.0.0",
+  "description": "A multiplayer card game similar to Cards Against Humanity, built with Node.js and Socket.io",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "card",
+    "game",
+    "socket.io",
+    "multiplayer"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2",
+    "socket.io": "^4.7.5"
+  }
+}

@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cocorido</title>
+    <style>
+        html, body {
+            margin: 0; padding: 0; height: 100%;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            overflow: hidden;
+        }
+        body { display: flex; flex-direction: row; }
+        
+        /* --- NUOVA PALETTE: "Vintage Modern" --- */
+        
+        #zona-giocatori-sidebar {
+            flex: 0 0 280px; 
+            background-color: #4E443A; /* Sfondo Sidebar */
+            color: white; padding: 20px; height: 100vh;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            overflow-y: auto; box-sizing: border-box;
+        }
+        #zona-giocatori-sidebar h2 {
+            margin-top: 0;
+            text-align: center;
+            background-color: #222;
+            color: white;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .giocatore-sidebar-item {
+            background-color: #6B5E51; /* Elementi Sidebar */
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 2px solid #4E443A; /* Sfondo Sidebar */
+            transition: all 0.3s ease; 
+            text-align: center;
+        }
+        .giocatore-nome {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: inline-block;
+        }
+        .giocatore-punti {
+            font-size: 0.9em;
+            color: #ccc;
+            font-weight: normal;
+        }
+        
+        .giocatore-sidebar-item.tu {
+            background-color: #A38D6F; /* Colore "Tu" (Beige) */
+            border-color: #A38D6F;
+        }
+        .giocatore-sidebar-item.in-attesa {
+            background-color: #4E443A;
+            color: #ccc;
+            border-color: #6B5E51;
+        }
+        .giocatore-sidebar-item.ha-giocato {
+            background-color: #798A74; /* Colore "Ha Giocato" (Verde oliva) */
+            border-color: #A38D6F;
+        }
+        .giocatore-sidebar-item.master-turno {
+            border-color: #E0C097; /* Colore Master (Crema/Sabbia) */
+        }
+        .giocatore-sidebar-item.master-turno.tu {
+            background-color: #A38D6F;
+        }
+        
+        #contenitore-principale {
+            flex: 1; height: 100vh;
+            overflow-y: auto; padding: 30px; 
+            box-sizing: border-box; text-align: center;
+            position: relative; 
+        }
+
+        #titolo-gioco {
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            font-size: 6em;
+            color: #A38D6F; /* Colore "Tu" (Beige) */
+            text-shadow: 4px 4px 6px rgba(0, 0, 0, 0.4), 
+                         -4px -4px 6px rgba(255, 255, 255, 0.2);
+            text-align: center;
+            margin-top: 50px;
+            margin-bottom: 40px;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            display: none;
+        }
+        
+        #stato-connessione { 
+            font-weight: bold; 
+            margin-bottom: 5px;
+            display: none;
+        }
+        
+        #zona-profilo-giocatore {
+            background-color: #fff;
+            border: 2px solid #A38D6F; /* Colore "Tu" (Beige) */
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 600px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+        #zona-profilo-giocatore h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .profilo-nome-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #A38D6F; /* Colore "Tu" (Beige) */
+        }
+        .profilo-edit-icon {
+            font-size: 0.8em;
+            margin-left: 10px;
+            cursor: pointer;
+            opacity: 0.7;
+        }
+        .profilo-edit-icon:hover {
+            opacity: 1;
+        }
+        
+        #profilo-nome-input {
+            font-family: Arial, sans-serif;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #A38D6F; /* Colore "Tu" (Beige) */
+            border: none;
+            border-bottom: 2px solid #ccc;
+            background: none;
+            text-align: center;
+            padding: 0;
+            width: 60%; 
+        }
+        #profilo-nome-input:focus {
+            outline: none;
+            border-bottom: 2px solid #A38D6F; /* Colore "Tu" (Beige) */
+        }
+        
+        #zona-lobby {
+            background-color: #f9f9f9; border: 1px dashed #ccc;
+            padding: 20px; margin: 20px auto; max-width: 600px;
+            border-radius: 8px;
+        }
+        #zona-lobby h3 { margin-top: 0; }
+        
+        #btn-inizia {
+            font-size: 20px; padding: 15px 30px; cursor: pointer;
+            background-color: #A38D6F; /* Colore "Tu" (Beige) */
+            color: white; border: none;
+            border-radius: 5px;
+            display: block;
+            margin: 20px auto;
+        }
+        #btn-inizia:hover { 
+            background-color: #8D7B60; /* Beige più scuro */
+        }
+        
+        #btn-attiva-scelta {
+            font-size: 18px; padding: 12px 25px; cursor: pointer;
+            background-color: #E0C097; /* Colore Master (Crema/Sabbia) */
+            color: #4E443A; /* Testo scuro per bottone chiaro */
+            border: none;
+            border-radius: 5px; margin: 20px auto;
+            display: none;
+        }
+        #btn-attiva-scelta:hover { 
+            background-color: #CDB38B; /* Crema/Sabbia più scuro */
+        }
+
+        #area-gioco { margin-top: 20px; max-width: 900px; margin-left: auto; margin-right: auto;}
+        #zona-master {
+            background-color: #fff8e1; padding: 15px; border-radius: 8px;
+            border: 2px solid #E0C097; /* Colore Master (Crema/Sabbia) */
+            font-size: 1.2em; font-weight: bold;
+            display: none; max-width: 600px; margin: 20px auto;
+        }
+        #zona-carta-nera { display: none; max-width: 600px; margin: 20px auto; }
+        .carta-nera {
+            background-color: #222; color: white; padding: 30px 20px;
+            border-radius: 12px; font-size: 1.5em; font-weight: bold;
+            min-height: 150px; display: flex; align-items: center;
+            justify-content: center; box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            line-height: 1.4;
+        }
+        #info-master { font-weight: bold; }
+        #zona-mano-giocatore {
+            display: flex; flex-wrap: wrap; justify-content: center;
+            gap: 15px; margin-top: 30px; padding-bottom: 30px;
+        }
+        #zona-carte-giocate {
+            display: flex; flex-direction: row;
+            flex-wrap: wrap; justify-content: center;
+            gap: 15px; margin-top: 30px; padding-bottom: 30px;
+        }
+        .carta-coperta {
+            background-color: #888; border: 2px solid #555;
+            border-radius: 10px; width: 150px; min-height: 180px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: all 0.2s ease;
+        }
+        .carta-coperta.cliccabile { cursor: pointer; }
+        .carta-coperta.cliccabile:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15); 
+            border-color: #E0C097; /* Colore Master (Crema/Sabbia) */
+        }
+        .carta-bianca {
+            background-color: white; color: #222; border: 1px solid #ccc;
+            border-radius: 10px; padding: 20px 15px; font-size: 1.1em;
+            font-weight: 500; width: 150px; min-height: 180px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex;
+            align-items: center; justify-content: center; transition: all 0.2s ease;
+        }
+        .carta-giocabile { cursor: pointer; }
+        .carta-giocabile:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15); 
+            border-color: #A38D6F; /* Colore "Tu" (Beige) */
+        }
+        .carta-scelta {
+            background-color: #f7f2ed; /* Sfondo Beige chiaro */
+            color: #222; 
+            border: 2px dashed #A38D6F; /* Colore "Tu" (Beige) */
+            border-radius: 10px; padding: 20px 15px; font-size: 1.1em;
+            font-weight: 500; width: 150px; min-height: 180px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex;
+            align-items: center; justify-content: center; cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .carta-scelta:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15); 
+            background-color: #e6e0d9;
+        }
+        .carta-vincitrice {
+            border: 4px solid #E0C097; /* Colore Master (Crema/Sabbia) */
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="zona-giocatori-sidebar">
+        <h2>Players</h2>
+        <div id="lista-giocatori-container"></div>
+    </div>
+    
+    <div id="contenitore-principale">
+        
+        <h1 id="titolo-gioco">Cocorido</h1> 
+
+        <h2 id="stato-connessione">Disconnected ❌</h2>
+        
+        <div id="zona-profilo-giocatore" style="display: none;">
+            <h3>Your Profile</h3>
+            <div class="profilo-nome-container">
+                <span id="profilo-nome-testo"></span>
+                <input type="text" id="profilo-nome-input" style="display: none;" />
+                <span id="profilo-edit-icon" class="profilo-edit-icon">✏️</span>
+            </div>
+        </div>
+        
+        <div id="zona-lobby">
+            <h3>Lobby</h3>
+            <p id="lobby-conteggio">Waiting for players...</p>
+            <p id="lobby-attesa-host"></p>
+        </div>
+
+        <button id="btn-inizia" style="display: none;">START GAME</button>
+        <div id="area-messaggi"></div>
+
+        <div id="area-gioco">
+            <div id="zona-master"></div>
+            <div id="zona-carta-nera">
+                <div class="carta-nera" id="testo-carta-nera"></div>
+                <p id="info-master"></p>
+            </div>
+            
+            <div id="zona-carte-giocate"></div>
+            <button id="btn-attiva-scelta" style="display: none;">Choose Winner</button>
+            <div id="zona-mano-giocatore"></div>
+        </div>
+
+    </div> 
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        // Elementi HTML
+        const statoConnessioneEl = document.getElementById('stato-connessione');
+        const btnInizia = document.getElementById('btn-inizia');
+        const areaMessaggi = document.getElementById('area-messaggi');
+        const titoloGiocoEl = document.getElementById('titolo-gioco');
+        const zonaMaster = document.getElementById('zona-master');
+        const zonaCartaNera = document.getElementById('zona-carta-nera');
+        const testoCartaNera = document.getElementById('testo-carta-nera');
+        const infoMaster = document.getElementById('info-master');
+        const zonaManoGiocatore = document.getElementById('zona-mano-giocatore');
+        const zonaCarteGiocate = document.getElementById('zona-carte-giocate'); 
+        const listaGiocatoriContainer = document.getElementById('lista-giocatori-container');
+        const zonaLobby = document.getElementById('zona-lobby');
+        const lobbyConteggio = document.getElementById('lobby-conteggio');
+        const lobbyAttesaHost = document.getElementById('lobby-attesa-host');
+        const btnAttivaScelta = document.getElementById('btn-attiva-scelta');
+        
+        const zonaProfiloGiocatore = document.getElementById('zona-profilo-giocatore');
+        const profiloNomeTesto = document.getElementById('profilo-nome-testo');
+        const profiloEditIcon = document.getElementById('profilo-edit-icon');
+        const profiloNomeInput = document.getElementById('profilo-nome-input');
+
+        // Stato locale
+        let mioRuolo = { isMaster: false };
+        let mioStato = { inAttesa: false }; 
+        let listaGiocatoriLocale = []; 
+        let masterCorrenteID = null;
+
+        function getNomeGiocatore(id) {
+            const giocatore = listaGiocatoriLocale.find(g => g.id === id);
+            return giocatore ? giocatore.nome : "Player...";
+        }
+        
+        function attivaModificaNome() {
+            profiloNomeTesto.style.display = 'none';
+            profiloNomeInput.style.display = 'inline-block';
+            profiloNomeInput.value = profiloNomeTesto.textContent;
+            profiloNomeInput.focus();
+            profiloEditIcon.textContent = '✅';
+        }
+        
+        function salvaModificaNome() {
+            const nuovoNome = profiloNomeInput.value;
+            const nomeAttuale = profiloNomeTesto.textContent;
+            
+            if (nuovoNome && nuovoNome !== nomeAttuale) {
+                socket.emit('imposta-nome', nuovoNome);
+            }
+            
+            profiloNomeInput.style.display = 'none';
+            profiloNomeTesto.style.display = 'inline-block';
+            profiloEditIcon.textContent = '✏️';
+        }
+
+        // --- GESTIONE CONNESSIONE ---
+        socket.on('connect', () => {
+            statoConnessioneEl.style.display = 'none';
+        });
+        
+        socket.on('disconnect', () => {
+            statoConnessioneEl.style.display = 'block';
+            statoConnessioneEl.style.color = 'red';
+        });
+
+        btnInizia.addEventListener('click', () => {
+            socket.emit('inizia-partita');
+            btnInizia.style.display = 'none'; 
+        });
+
+        socket.on('errore', (messaggio) => {
+            areaMessaggi.innerHTML = `<p style="color: red;">${messaggio}</p>`;
+        });
+        
+        btnAttivaScelta.addEventListener('click', () => {
+            btnAttivaScelta.style.display = 'none';
+            zonaMaster.textContent = "Choose the winning card!";
+            const carteRivelate = zonaCarteGiocate.querySelectorAll('.carta-bianca');
+            carteRivelate.forEach(cartaDiv => {
+                cartaDiv.className = 'carta-scelta';
+                cartaDiv.onclick = () => {
+                    const testoScelto = cartaDiv.dataset.testo;
+                    console.log("Master has chosen:", testoScelto);
+                    socket.emit('scegli-vincitore', testoScelto); 
+                    zonaCarteGiocate.innerHTML = `<p style="font-size: 1.5em; color: green;">You chose! Announcing winner...</p>`;
+                };
+            });
+        });
+        
+        profiloEditIcon.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (profiloEditIcon.textContent === '✏️') {
+                attivaModificaNome();
+            } else {
+                salvaModificaNome();
+            }
+        });
+        
+        profiloNomeInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                salvaModificaNome();
+            }
+        });
+        profiloNomeInput.addEventListener('blur', () => {
+            if (profiloNomeInput.style.display !== 'none') {
+                salvaModificaNome();
+            }
+        });
+
+
+        // --- GESTIONE LISTA GIOCATORI ---
+        socket.on('aggiorna-lista-giocatori', (data) => {
+            const { giocatori, hostID, partitaInCorso } = data;
+            listaGiocatoriLocale = giocatori; 
+            listaGiocatoriContainer.innerHTML = ''; 
+            
+            giocatori.forEach(g => {
+                const giocatoreDiv = document.createElement('div');
+                giocatoreDiv.className = 'giocatore-sidebar-item'; 
+                const nomeDiv = document.createElement('div');
+                nomeDiv.className = 'giocatore-nome';
+                let nomeTesto = g.nome;
+                if (g.id === hostID) {
+                    nomeTesto = `👑 ${nomeTesto}`;
+                }
+                nomeDiv.textContent = nomeTesto;
+                giocatoreDiv.appendChild(nomeDiv);
+                
+                const puntiDiv = document.createElement('div');
+                puntiDiv.className = 'giocatore-punti';
+                puntiDiv.textContent = `Points: ${g.punti}`;
+                giocatoreDiv.appendChild(puntiDiv);
+                
+                if (g.id === socket.id) {
+                    giocatoreDiv.classList.add('tu');
+                }
+                if (g.inAttesa) {
+                    giocatoreDiv.classList.add('in-attesa');
+                } else if (g.id === masterCorrenteID) {
+                    giocatoreDiv.classList.add('master-turno');
+                } else if (g.haGiocato) {
+                    giocatoreDiv.classList.add('ha-giocato');
+                }
+                listaGiocatoriContainer.appendChild(giocatoreDiv);
+            });
+            
+            const mioDato = giocatori.find(g => g.id === socket.id);
+
+            if (!partitaInCorso) {
+                zonaLobby.style.display = 'block';
+                titoloGiocoEl.style.display = 'block';
+                
+                if (mioDato) {
+                    zonaProfiloGiocatore.style.display = 'block';
+                    profiloEditIcon.style.display = 'inline-block';
+                    
+                    if (profiloNomeInput.style.display === 'none') {
+                        profiloNomeTesto.textContent = mioDato.nome;
+                    }
+                }
+                
+                lobbyConteggio.textContent = `Players in lobby: ${giocatori.length}`;
+                if (socket.id === hostID) {
+                    btnInizia.style.display = 'block';
+                    lobbyAttesaHost.textContent = "You are the Host! You can start the game when ready.";
+                } else {
+                    btnInizia.style.display = 'none';
+                    const nomeHost = getNomeGiocatore(hostID);
+                    lobbyAttesaHost.textContent = `Waiting for ${nomeHost} to start the game.`;
+                }
+            } else if (partitaInCorso && mioDato && mioDato.inAttesa) {
+                zonaLobby.style.display = 'block'; 
+                zonaProfiloGiocatore.style.display = 'none'; 
+                titoloGiocoEl.style.display = 'none';
+                lobbyConteggio.textContent = `Game in progress...`;
+                lobbyAttesaHost.textContent = "Waiting for the next round to join the game.";
+                btnInizia.style.display = 'none';
+            } else {
+                zonaLobby.style.display = 'none';
+                zonaProfiloGiocatore.style.display = 'none'; 
+                titoloGiocoEl.style.display = 'none';
+                btnInizia.style.display = 'none';
+            }
+        });
+
+        // -----------------------------------------------------------------
+        // 🃏 LOGICA DI GIOCO
+        // -----------------------------------------------------------------
+        socket.on('nuovo-turno', (dati) => {
+            masterCorrenteID = dati.masterID;
+            
+            zonaLobby.style.display = 'none'; 
+            zonaProfiloGiocatore.style.display = 'none'; 
+            titoloGiocoEl.style.display = 'none';
+            btnInizia.style.display = 'none';
+            areaMessaggi.innerHTML = '';
+            zonaManoGiocatore.innerHTML = ''; 
+            zonaCarteGiocate.innerHTML = '';
+            zonaCarteGiocate.style.display = 'none';
+            btnAttivaScelta.style.display = 'none'; 
+            
+            zonaCartaNera.style.display = 'block';
+            testoCartaNera.textContent = dati.cartaNera;
+            
+            if (dati.masterID === socket.id) {
+                infoMaster.textContent = "You are the Master!";
+            } else {
+                infoMaster.textContent = `This round's Master is: ${getNomeGiocatore(dati.masterID)}`;
+            }
+        });
+        
+        socket.on('aggiorna-stato-ruolo', (dati) => { 
+            mioRuolo.isMaster = dati.isMaster;
+            if (mioRuolo.isMaster) {
+                zonaMaster.textContent = "Waiting for players to choose...";
+                zonaMaster.style.display = 'block';
+                zonaManoGiocatore.style.display = 'none'; 
+            } else {
+                zonaMaster.textContent = "Choose your best card.";
+                zonaMaster.style.display = 'block';
+                zonaManoGiocatore.style.display = 'flex'; 
+            }
+        });
+        socket.on('aggiorna-mano', (mano) => { 
+            zonaManoGiocatore.innerHTML = ''; 
+            if (mano.length === 0) {
+                zonaManoGiocatore.style.display = 'none';
+                return;
+            }
+            zonaManoGiocatore.style.display = 'flex';
+            mano.forEach(testoCarta => {
+                const cartaDiv = document.createElement('div');
+                cartaDiv.className = 'carta-bianca carta-giocabile'; 
+                cartaDiv.textContent = testoCarta;
+                cartaDiv.addEventListener('click', () => {
+                    if (!mioRuolo.isMaster && zonaManoGiocatore.style.display !== 'none') {
+                        socket.emit('gioca-carta', testoCarta);
+                        zonaManoGiocatore.innerHTML = '<p style="font-size: 1.2em; color: #555;">You played! Waiting for others...</p>';
+                        zonaManoGiocatore.style.display = 'block';
+                    }
+                });
+                zonaManoGiocatore.appendChild(cartaDiv);
+            });
+        });
+        
+        socket.on('inizia-fase-rivelazione', (data) => {
+            console.log("Starting reveal phase, there are", data.numCarte, "cards");
+            zonaManoGiocatore.innerHTML = '';
+            zonaManoGiocatore.style.display = 'none';
+            zonaCarteGiocate.innerHTML = '';
+            zonaCarteGiocate.style.display = 'flex';
+            
+            for (let i = 0; i < data.numCarte; i++) {
+                const cartaDiv = document.createElement('div');
+                cartaDiv.className = 'carta-coperta';
+                cartaDiv.dataset.index = i;
+                zonaCarteGiocate.appendChild(cartaDiv);
+            }
+            
+            if (!mioRuolo.isMaster) {
+                zonaMaster.textContent = "All players have played! The Master is revealing the cards...";
+                zonaMaster.style.display = 'block';
+            }
+        });
+
+        socket.on('sei-pronto-a-rivelare', () => {
+            console.log("Ready to reveal (by clicking cards)");
+            zonaMaster.textContent = "Reveal the cards by clicking them!";
+            zonaMaster.style.display = 'block';
+            
+            const carteCoperte = zonaCarteGiocate.querySelectorAll('.carta-coperta');
+            carteCoperte.forEach(cartaDiv => {
+                cartaDiv.classList.add('cliccabile');
+                cartaDiv.onclick = () => {
+                    console.log("Master clicked card index:", cartaDiv.dataset.index);
+                    socket.emit('rivolgi-carta', { index: cartaDiv.dataset.index });
+                    cartaDiv.onclick = null;
+                    cartaDiv.classList.remove('cliccabile');
+                };
+            });
+        });
+
+        socket.on('carta-rivelata', (data) => {
+            console.log("Card revealed:", data.index, data.testoCarta);
+            
+            const cartaDaRivelare = zonaCarteGiocate.querySelector(`.carta-coperta[data-index="${data.index}"]`);
+            
+            if (cartaDaRivelare) {
+                const cartaNuova = document.createElement('div');
+                cartaNuova.className = 'carta-bianca';
+                cartaNuova.dataset.index = data.index;
+                cartaNuova.dataset.testo = data.testoCarta;
+                cartaNuova.textContent = data.testoCarta;
+                
+                cartaDaRivelare.replaceWith(cartaNuova);
+            }
+        });
+
+        socket.on('attendi-scelta-finale', () => {
+            console.log("All cards revealed, waiting for Master's choice");
+            zonaMaster.textContent = "All cards revealed. Waiting for the Master's choice.";
+            zonaMaster.style.display = 'block';
+        });
+
+        socket.on('mostra-pulsante-scegli', () => {
+            console.log("All cards revealed, showing 'Choose' button");
+            zonaMaster.textContent = "All cards are revealed! Press the button to decide.";
+            zonaMaster.style.display = 'block';
+            btnAttivaScelta.style.display = 'block';
+        });
+        
+        socket.on('annuncia-vincitore', (dati) => {
+            masterCorrenteID = dati.vincitoreID;
+            
+            zonaManoGiocatore.innerHTML = '';
+            zonaManoGiocatore.style.display = 'none';
+            zonaCarteGiocate.innerHTML = '';
+            btnAttivaScelta.style.display = 'none';
+            zonaCarteGiocate.style.display = 'flex'; 
+            
+            zonaCartaNera.style.display = 'block';
+            testoCartaNera.textContent = dati.cartaNera;
+            
+            const cartaVincitriceDiv = document.createElement('div');
+            cartaVincitriceDiv.className = 'carta-bianca carta-vincitrice'; 
+            cartaVincitriceDiv.textContent = dati.cartaVincitrice;
+            zonaCarteGiocate.appendChild(cartaVincitriceDiv);
+            
+            let messaggio = '';
+            const nomeVincitore = getNomeGiocatore(dati.vincitoreID); 
+            if (dati.vincitoreID === socket.id) {
+                messaggio = "You won this round! You are the new Master.";
+                zonaMaster.style.borderColor = '#E0C097'; /* Colore Master (Crema/Sabbia) */
+            } else {
+                messaggio = `Player ${nomeVincitore} won! They are the next Master.`; 
+                zonaMaster.style.borderColor = '#E0C097'; /* Colore Master (Crema/Sabbia) */
+            }
+            zonaMaster.textContent = messaggio;
+            zonaMaster.style.display = 'block';
+            infoMaster.textContent = "Next round in 5 seconds...";
+        });
+
+    </script>
+
+</body>
+</html>
