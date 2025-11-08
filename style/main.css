@@ -22,6 +22,8 @@
     --colore-giocatore-tu: #3182CE; /* Blu Intenso */
     --colore-giocatore-ha-giocato: #48BB78; /* Verde */
     --colore-master: #ECC94B; /* Giallo oro */
+    --colore-btn-warning: #E53E3E; /* Rosso per warning/errore */
+
     --colore-giocatore-in-attesa-bg: #2D3748;
     --colore-giocatore-in-attesa-testo: #718096;
     
@@ -50,9 +52,9 @@
     --colore-ombra-titolo-scura: rgba(0, 0, 0, 0.4);
     --colore-ombra-titolo-chiara: rgba(255, 255, 255, 0.2);
 
-    /* --- MODIFICATO: Colori Chat (Punto 1) --- */
-    --colore-chat-sfondo-messaggio: #1A202C; /* Sfondo scuro */
-    --colore-chat-testo-messaggio: #E2E8F0; /* Testo chiaro */
+    /* --- NOVITÀ: Colori specifici per la Chat --- */
+    --colore-chat-sfondo-messaggio: #1A202C; /* Sfondo scuro per i messaggi */
+    --colore-chat-testo-messaggio: #E2E8F0; /* Testo chiaro per i messaggi */
     --colore-chat-notifica: #E53E3E; /* Rosso per nuove notifiche */
 }
 /* --- FINE CENTRALE DI CONTROLLO --- */
@@ -62,12 +64,12 @@ html, body {
     margin: 0; padding: 0; height: 100%;
     font-family: Arial, sans-serif;
     background-color: var(--colore-sfondo-pagina);
-    overflow: hidden;
+    overflow: hidden; /* Per evitare scrollbar quando la chat è fuori */
 }
 body { display: flex; flex-direction: row; }
 
 #zona-giocatori-sidebar {
-    flex: 0 0 200px; /* <-- MODIFICATO: Larghezza ridotta (Punto 3) */
+    flex: 0 0 200px; 
     background-color: var(--colore-sfondo-sidebar);
     color: var(--colore-testo-sidebar); 
     padding: 20px; height: 100vh;
@@ -130,7 +132,12 @@ body { display: flex; flex-direction: row; }
     overflow-y: auto; padding: 30px; 
     box-sizing: border-box; text-align: center;
     position: relative; 
-    transition: padding-right 0.3s ease; /* Transizione per il padding */
+    transition: padding-right 0.3s ease-out; /* Transizione per il padding */
+}
+
+/* Classe per "spingere" il contenuto */
+#contenitore-principale.chat-attiva {
+    padding-right: 330px; /* Larghezza chat (280) + margin-right chat (20) + padding extra (30) */
 }
 
 #titolo-gioco {
@@ -318,13 +325,13 @@ body { display: flex; flex-direction: row; }
 }
 
 
-/* --- Stili Chat (MODIFICATI per Punti 1, 2) --- */
+/* --- Stili Chat (MODIFICATI per animazione fluida) --- */
 
 #chat-container {
     position: absolute; 
     top: 20px;
-    right: 30px;
-    width: 250px; /* <-- MODIFICATO: Più piccolo */
+    right: -310px; /* Nascosta fuori schermo, 280px (larg.) + 30px (margine) */
+    width: 280px; 
     z-index: 1000;
     
     background-color: var(--colore-sfondo-sidebar);
@@ -333,12 +340,11 @@ body { display: flex; flex-direction: row; }
     padding: 15px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     
-    transform: translateX(calc(100% + 40px)); /* Nascosto fuori schermo */
-    transition: transform 0.3s ease-out; 
+    transition: right 0.3s ease-out; /* Anima la proprietà 'right' */
 }
 
 #chat-container.aperta {
-    transform: translateX(0); /* Visibile */
+    right: 20px; /* Visibile, 20px dal bordo destro */
 }
 
 #chat-container h3 {
@@ -350,9 +356,9 @@ body { display: flex; flex-direction: row; }
 }
 
 #chat-messaggi-lista {
-    height: 180px; /* <-- MODIFICATO: Più piccolo */
+    height: 180px; 
     overflow-y: auto; 
-    background-color: var(--colore-chat-sfondo-messaggio); /* <-- MODIFICATO (Punto 1) */
+    background-color: var(--colore-chat-sfondo-messaggio); 
     border: 1px solid var(--colore-elemento-sidebar);
     border-radius: 6px;
     padding: 10px;
@@ -363,7 +369,7 @@ body { display: flex; flex-direction: row; }
 .messaggio-chat {
     margin-bottom: 8px;
     word-wrap: break-word; 
-    color: var(--colore-chat-testo-messaggio); /* <-- MODIFICATO (Punto 1) */
+    color: var(--colore-chat-testo-messaggio); 
 }
 
 .messaggio-chat .nome {
@@ -390,7 +396,7 @@ body { display: flex; flex-direction: row; }
     flex: 1; 
     background-color: var(--colore-sfondo-pagina);
     border: 1px solid var(--colore-testo-chiaro);
-    color: var(--colore-testo-sidebar); /* Testo chiaro su sfondo scuro */
+    color: var(--colore-testo-sidebar); 
     border-radius: 5px;
     padding: 8px;
 }
@@ -412,11 +418,11 @@ body { display: flex; flex-direction: row; }
     background-color: #4299E1;
 }
 
-/* --- Stili Toggle Chat (Punto 2) --- */
+/* --- Stili Toggle Chat (Il bottone si sposta con la chat) --- */
 #chat-toggle-btn {
     position: absolute;
     top: 20px;
-    right: 30px; /* Allineato con il container della chat */
+    right: 20px; /* Inizialmente a 20px dal bordo */
     width: 40px;
     height: 40px;
     background-color: var(--colore-giocatore-tu);
@@ -430,8 +436,8 @@ body { display: flex; flex-direction: row; }
     cursor: pointer;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     z-index: 1001; 
-    transition: background-color 0.2s ease, transform 0.3s ease-out; /* Animazione per lo spostamento */
-    display: none; /* Nascosto di default */
+    transition: background-color 0.2s ease, transform 0.2s ease, right 0.3s ease-out; /* Anima anche 'right' */
+    display: none; 
 }
 #chat-toggle-btn:hover {
     background-color: #4299E1;
@@ -443,17 +449,13 @@ body { display: flex; flex-direction: row; }
     animation: pulse 1s infinite alternate;
 }
 
-/* --- Sposta il bottone a sinistra quando la chat è aperta --- */
+/* Sposta il bottone a sinistra quando la chat è aperta */
 #chat-toggle-btn.chat-aperta {
-    transform: translateX(-280px); /* 250px (chat) + 30px (padding) */
+    right: 310px; /* Larghezza chat (280) + margin-right chat (20) + padding extra (10) */
 }
 
 @keyframes pulse {
     from { transform: scale(1); }
     to { transform: scale(1.1); }
 }
-
-/* --- Classe per "spingere" il contenuto (Punto 2) --- */
-#contenitore-principale.chat-attiva {
-    padding-right: 280px; /* 250px (chat) + 30px (padding) */
-}
+/* --- FINE Stili Chat --- */

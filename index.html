@@ -135,15 +135,15 @@
             profiloEditIcon.textContent = '✏️';
         }
 
-        // --- Funzione per aprire/chiudere la chat (MODIFICATA per Punto 2) ---
+        // --- Funzione per aprire/chiudere la chat (MODIFICATA) ---
         function toggleChat() {
             isChatOpen = !isChatOpen;
             if (isChatOpen) {
                 chatContainer.classList.add('aperta');
                 contenitorePrincipale.classList.add('chat-attiva'); // Spinge il contenuto
                 chatToggleBtn.classList.add('chat-aperta'); // Sposta il bottone
-                chatToggleBtn.classList.remove('has-new-messages');
-                chatMessaggiLista.scrollTop = chatMessaggiLista.scrollHeight;
+                chatToggleBtn.classList.remove('has-new-messages'); // Rimuovi notifica
+                chatMessaggiLista.scrollTop = chatMessaggiLista.scrollHeight; // Scrolla in fondo
                 chatInput.focus();
             } else {
                 chatContainer.classList.remove('aperta');
@@ -208,7 +208,7 @@
 
         chatToggleBtn.addEventListener('click', toggleChat); 
 
-        // --- GESTIONE LISTA GIOCATORI (MODIFICATO per Punto 2) ---
+        // --- GESTIONE LISTA GIOCATORI ---
         socket.on('aggiorna-lista-giocatori', (data) => {
             const { giocatori, hostID, partitaInCorso } = data;
             listaGiocatoriLocale = giocatori; 
@@ -252,6 +252,7 @@
                 chatToggleBtn.style.display = 'none'; // Nascondi bottone toggle
                 chatContainer.classList.remove('aperta'); // Resetta stato
                 contenitorePrincipale.classList.remove('chat-attiva'); // Resetta padding
+                chatToggleBtn.classList.remove('chat-aperta'); // Resetta posizione bottone
                 
                 if (mioDato) {
                     zonaProfiloGiocatore.style.display = 'block';
@@ -466,7 +467,7 @@
             }, 1000);
         });
         
-        // --- Logica della Chat (MODIFICATA per Punto 2) ---
+        // --- Logica della Chat ---
         
         chatForm.addEventListener('submit', (e) => {
             e.preventDefault(); 
