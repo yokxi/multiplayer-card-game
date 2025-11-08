@@ -28,6 +28,7 @@
                 <button type="submit">Send</button>
             </form>
         </div>
+        
         <button id="chat-toggle-btn">💬</button>
 
         <h2 id="stato-connessione">Disconnected ❌</h2>
@@ -97,7 +98,7 @@
         const chatForm = document.getElementById('chat-form');
         const chatInput = document.getElementById('chat-input');
         const chatMessaggiLista = document.getElementById('chat-messaggi-lista');
-        const chatToggleBtn = document.getElementById('chat-toggle-btn'); 
+        const chatToggleBtn = document.getElementById('chat-toggle-btn');
 
         // Stato locale
         let mioRuolo = { isMaster: false };
@@ -134,15 +135,20 @@
             profiloEditIcon.textContent = '✏️';
         }
 
+        // --- Funzione per aprire/chiudere la chat (MODIFICATA per Punto 2) ---
         function toggleChat() {
             isChatOpen = !isChatOpen;
             if (isChatOpen) {
                 chatContainer.classList.add('aperta');
-                chatToggleBtn.classList.remove('has-new-messages'); 
-                chatMessaggiLista.scrollTop = chatMessaggiLista.scrollHeight; 
+                contenitorePrincipale.classList.add('chat-attiva'); // Spinge il contenuto
+                chatToggleBtn.classList.add('chat-aperta'); // Sposta il bottone
+                chatToggleBtn.classList.remove('has-new-messages');
+                chatMessaggiLista.scrollTop = chatMessaggiLista.scrollHeight;
                 chatInput.focus();
             } else {
                 chatContainer.classList.remove('aperta');
+                contenitorePrincipale.classList.remove('chat-attiva'); // Rilascia il contenuto
+                chatToggleBtn.classList.remove('chat-aperta'); // Rimette il bottone a posto
             }
         }
 
@@ -202,7 +208,7 @@
 
         chatToggleBtn.addEventListener('click', toggleChat); 
 
-        // --- GESTIONE LISTA GIOCATORI ---
+        // --- GESTIONE LISTA GIOCATORI (MODIFICATO per Punto 2) ---
         socket.on('aggiorna-lista-giocatori', (data) => {
             const { giocatori, hostID, partitaInCorso } = data;
             listaGiocatoriLocale = giocatori; 
@@ -240,22 +246,21 @@
             
             const mioDato = giocatori.find(g => g.id === socket.id);
 
-            // Logica per mostrare/nascondere elementi UI
-            zonaProfiloGiocatore.style.display = mioDato ? 'block' : 'none'; // Sempre visibile se il giocatore esiste
-
-            if (mioDato) { // Se il mio giocatore esiste, gestisco il nome
-                profiloEditIcon.style.display = 'inline-block';
-                if (profiloNomeInput.style.display === 'none') {
-                    profiloNomeTesto.textContent = mioDato.nome;
-                }
-            }
-
-
             if (!partitaInCorso) {
                 zonaLobby.style.display = 'block';
-                titoloGiocoEl.style.display = 'block'; // FAI VISIBILE IL TITOLO IN LOBBY
-                chatContainer.classList.remove('aperta'); 
-                chatToggleBtn.style.display = 'none'; // Nascondi bottone toggle in lobby
+                titoloGiocoEl.style.display = 'block';
+                chatToggleBtn.style.display = 'none'; // Nascondi bottone toggle
+                chatContainer.classList.remove('aperta'); // Resetta stato
+                contenitorePrincipale.classList.remove('chat-attiva'); // Resetta padding
+                
+                if (mioDato) {
+                    zonaProfiloGiocatore.style.display = 'block';
+                    profiloEditIcon.style.display = 'inline-block';
+                    
+                    if (profiloNomeInput.style.display === 'none') {
+                        profiloNomeTesto.textContent = mioDato.nome;
+                    }
+                }
                 
                 lobbyConteggio.textContent = `Players in lobby: ${giocatori.length}`;
                 if (socket.id === hostID) {
@@ -269,6 +274,7 @@
             } else {
                 // Se la partita è in corso...
                 zonaLobby.style.display = 'none';
+                zonaProfiloGiocatore.style.display = 'none'; 
                 titoloGiocoEl.style.display = 'none';
                 btnInizia.style.display = 'none';
                 
@@ -276,15 +282,15 @@
                     zonaLobby.style.display = 'block'; 
                     lobbyConteggio.textContent = `Game in progress...`;
                     lobbyAttesaHost.textContent = "Waiting for the next round to join the game.";
-                    chatToggleBtn.style.display = 'none'; // Se è in attesa, non ha senso la chat di gioco
+                    chatToggleBtn.style.display = 'none'; // Nascondi se in attesa
                 } else {
-                    chatToggleBtn.style.display = 'flex'; // Mostra bottone toggle solo se non in attesa
+                    chatToggleBtn.style.display = 'flex'; // Mostra bottone toggle
                 }
             }
         });
 
         // -----------------------------------------------------------------
-        // 🃏 LOGICA DI GIOCO 
+        // 🃏 LOGICA DI GIOCO
         // -----------------------------------------------------------------
         socket.on('nuovo-turno', (dati) => {
             if (countdownInterval) clearInterval(countdownInterval);
@@ -292,7 +298,7 @@
             masterCorrenteID = dati.masterID;
             
             zonaLobby.style.display = 'none'; 
-            // zonaProfiloGiocatore.style.display = 'none'; // Già gestito in aggiorna-lista-giocatori
+            zonaProfiloGiocatore.style.display = 'none'; 
             titoloGiocoEl.style.display = 'none';
             btnInizia.style.display = 'none';
             areaMessaggi.innerHTML = '';
@@ -300,7 +306,7 @@
             zonaCarteGiocate.innerHTML = '';
             zonaCarteGiocate.style.display = 'none';
             btnAttivaScelta.style.display = 'none'; 
-            // chatToggleBtn.style.display = 'flex'; // Rimosso da qui, gestito in aggiorna-lista-giocatori
+            chatToggleBtn.style.display = 'flex'; // Mostra bottone
             
             zonaCartaNera.style.display = 'block';
             testoCartaNera.textContent = dati.cartaNera;
@@ -460,7 +466,7 @@
             }, 1000);
         });
         
-        // --- Logica della Chat ---
+        // --- Logica della Chat (MODIFICATA per Punto 2) ---
         
         chatForm.addEventListener('submit', (e) => {
             e.preventDefault(); 
