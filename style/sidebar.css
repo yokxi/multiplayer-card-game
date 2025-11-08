@@ -1,0 +1,58 @@
+#zona-giocatori-sidebar {
+    flex: 0 0 200px; 
+    background-color: var(--colore-sfondo-sidebar);
+    color: var(--colore-testo-sidebar); 
+    padding: 20px; height: 100vh;
+    box-shadow: 2px 0 5px var(--colore-ombra-sidebar);
+    overflow-y: auto; box-sizing: border-box;
+}
+#zona-giocatori-sidebar h2 {
+    margin-top: 0;
+    text-align: center;
+    background-color: var(--colore-sfondo-carta-nera);
+    color: var(--colore-testo-sidebar);
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+.giocatore-sidebar-item {
+    background-color: var(--colore-elemento-sidebar);
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border: 2px solid var(--colore-sfondo-sidebar);
+    transition: all 0.3s ease; 
+    text-align: center;
+}
+.giocatore-nome {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: inline-block;
+}
+.giocatore-punti {
+    font-size: 0.9em;
+    color: var(--colore-testo-chiaro);
+    font-weight: normal;
+}
+
+.giocatore-sidebar-item.tu {
+    background-color: var(--colore-giocatore-tu);
+    border-color: var(--colore-giocatore-tu);
+}
+.giocatore-sidebar-item.in-attesa {
+    background-color: var(--colore-giocatore-in-attesa-bg);
+    color: var(--colore-giocatore-in-attesa-testo);
+    border-color: var(--colore-elemento-sidebar);
+}
+.giocatore-sidebar-item.ha-giocato {
+    background-color: var(--colore-giocatore-ha-giocato);
+    border-color: var(--colore-giocatore-tu);
+}
+.giocatore-sidebar-item.master-turno {
+    border-color: var(--colore-master);
+}
+.giocatore-sidebar-item.master-turno.tu {
+    background-color: var(--colore-giocatore-tu);
+}

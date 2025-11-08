@@ -1,0 +1,88 @@
+#titolo-gioco {
+    font-family: 'Impact', 'Arial Black', sans-serif;
+    font-size: 6em;
+    color: var(--colore-testo-titolo);
+    text-shadow: 4px 4px 6px var(--colore-ombra-titolo-scura), 
+                 -4px -4px 6px var(--colore-ombra-titolo-chiara);
+    text-align: center;
+    margin-top: 50px;
+    margin-bottom: 40px;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    display: none;
+}
+
+#stato-connessione { 
+    font-weight: bold; 
+    margin-bottom: 5px;
+    display: none;
+}
+
+#zona-profilo-giocatore {
+    background-color: var(--colore-sfondo-box);
+    border: 2px solid var(--colore-giocatore-tu);
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 600px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px var(--colore-ombra-leggera);
+}
+#zona-profilo-giocatore h3 {
+    margin-top: 0;
+    color: var(--colore-testo-intermedio);
+}
+.profilo-nome-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: var(--colore-testo-profilo);
+}
+.profilo-edit-icon {
+    font-size: 0.8em;
+    margin-left: 10px;
+    cursor: pointer;
+    opacity: 0.7;
+}
+.profilo-edit-icon:hover {
+    opacity: 1;
+}
+
+#profilo-nome-input {
+    font-family: Arial, sans-serif;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: var(--colore-testo-profilo);
+    border: none;
+    border-bottom: 2px solid var(--colore-testo-chiaro);
+    background: none;
+    text-align: center;
+    padding: 0;
+    width: 60%; 
+}
+#profilo-nome-input:focus {
+    outline: none;
+    border-bottom: 2px solid var(--colore-giocatore-tu);
+}
+
+#zona-lobby {
+    background-color: var(--colore-sfondo-lobby); 
+    border: 1px dashed var(--colore-testo-chiaro);
+    padding: 20px; margin: 20px auto; max-width: 600px;
+    border-radius: 8px;
+}
+#zona-lobby h3 { margin-top: 0; }
+
+#btn-inizia {
+    font-size: 20px; padding: 15px 30px; cursor: pointer;
+    background-color: var(--colore-btn-start-bg);
+    color: var(--colore-btn-start-testo); 
+    border: none;
+    border-radius: 5px;
+    display: block;
+    margin: 20px auto;
+}
+#btn-inizia:hover { 
+    background-color: var(--colore-btn-start-hover);
+}

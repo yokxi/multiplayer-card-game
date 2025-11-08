@@ -1,0 +1,94 @@
+#area-gioco { margin-top: 20px; max-width: 900px; margin-left: auto; margin-right: auto;}
+#zona-master {
+    background-color: var(--colore-sfondo-messaggio); 
+    padding: 15px; border-radius: 8px;
+    border: 2px solid var(--colore-master);
+    font-size: 1.2em; font-weight: bold;
+    display: none; max-width: 600px; margin: 20px auto;
+    color: var(--colore-testo-scuro);
+}
+#zona-carta-nera { display: none; max-width: 600px; margin: 20px auto; }
+.carta-nera {
+    background-color: var(--colore-sfondo-carta-nera);
+    color: var(--colore-testo-sidebar); 
+    padding: 30px 20px;
+    border-radius: 12px; font-size: 1.5em; font-weight: bold;
+    min-height: 150px; display: flex; align-items: center;
+    justify-content: center; box-shadow: 0 4px 8px var(--colore-ombra-carta-nera);
+    line-height: 1.4;
+}
+#info-master { 
+    font-weight: bold;
+    color: var(--colore-testo-chiaro);
+}
+#zona-mano-giocatore {
+    display: flex; flex-wrap: wrap; justify-content: center;
+    gap: 15px; margin-top: 30px; padding-bottom: 30px;
+}
+#zona-carte-giocate {
+    display: flex; flex-direction: row;
+    flex-wrap: wrap; justify-content: center;
+    gap: 15px; margin-top: 30px; padding-bottom: 30px;
+}
+.carta-coperta {
+    background-color: var(--colore-sfondo-carta-coperta); 
+    border: 2px solid var(--colore-bordo-carta-coperta);
+    border-radius: 10px; width: 150px; min-height: 180px;
+    box-shadow: 0 2px 4px var(--colore-ombra-carta); 
+    transition: all 0.2s ease;
+}
+.carta-coperta.cliccabile { cursor: pointer; }
+.carta-coperta.cliccabile:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px var(--colore-ombra-carta-hover); 
+    border-color: var(--colore-master);
+}
+.carta-bianca {
+    background-color: var(--colore-sfondo-box); 
+    color: var(--colore-testo-scuro); 
+    border: 1px solid var(--colore-bordo-carta-bianca);
+    border-radius: 10px; padding: 20px 15px; font-size: 1.1em;
+    font-weight: 500; width: 150px; min-height: 180px;
+    box-shadow: 0 2px 4px var(--colore-ombra-carta); 
+    display: flex;
+    align-items: center; justify-content: center; transition: all 0.2s ease;
+}
+.carta-giocabile { cursor: pointer; }
+.carta-giocabile:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 6px 12px var(--colore-ombra-carta-hover); 
+    border-color: var(--colore-giocatore-tu);
+}
+.carta-scelta {
+    background-color: var(--colore-carta-selezionabile-bg);
+    color: var(--colore-testo-scuro); 
+    border: 2px dashed var(--colore-carta-selezionabile-bordo);
+    border-radius: 10px; padding: 20px 15px; font-size: 1.1em;
+    font-weight: 500; width: 150px; min-height: 180px;
+    box-shadow: 0 2px 4px var(--colore-ombra-carta); 
+    display: flex;
+    align-items: center; justify-content: center; cursor: pointer;
+    transition: all 0.2s ease;
+}
+.carta-scelta:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px var(--colore-ombra-carta-hover); 
+    background-color: var(--colore-carta-selezionabile-hover);
+}
+.carta-vincitrice {
+    border: 4px solid var(--colore-carta-vincitrice-bordo);
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px var(--colore-ombra-carta-nera);
+}
+
+#btn-attiva-scelta {
+    font-size: 18px; padding: 12px 25px; cursor: pointer;
+    background-color: var(--colore-btn-scegli-bg);
+    color: var(--colore-btn-scegli-testo);
+    border: none;
+    border-radius: 5px; margin: 20px auto;
+    display: none;
+}
+#btn-attiva-scelta:hover { 
+    background-color: var(--colore-btn-scegli-hover);
+}
