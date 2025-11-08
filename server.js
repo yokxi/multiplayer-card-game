@@ -97,6 +97,14 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', () => {
         console.log(`😢 A player disconnected: ${socket.id}`);
+        // Annuncia la disconnessione
+        const nome = statoPartita.giocatori[socket.id] ? statoPartita.giocatori[socket.id].nome : 'A player';
+        io.emit('nuovo-messaggio-chat', {
+            nome: "Game", // Messaggio di sistema
+            messaggio: `${nome} has left the game.`,
+            isSystem: true
+        });
+        
         delete statoPartita.giocatori[socket.id];
         
         if (Object.keys(statoPartita.giocatori).length === 0) {
@@ -108,16 +116,22 @@ io.on('connection', (socket) => {
     
     socket.on('imposta-nome', (nome) => {
         if (statoPartita.partitaInCorso) {
-            console.log(`Player ${socket.id} tried to change name mid-game, but was blocked.`);
             return;
         }
-
         const nomePulito = String(nome).substring(0, 20).trim() || 'AnonymousPlayer';
         
         if (statoPartita.giocatori[socket.id]) {
+            const nomeVecchio = statoPartita.giocatori[socket.id].nome;
             statoPartita.giocatori[socket.id].nome = nomePulito;
             console.log(`Player ${socket.id} set name to: ${nomePulito}`);
             aggiornaELinviaListaGiocatori();
+            
+            // Annuncia il cambio nome in chat
+            io.emit('nuovo-messaggio-chat', {
+                nome: "Game",
+                messaggio: `${nomeVecchio} is now known as ${nomePulito}.`,
+                isSystem: true
+            });
         }
     });
 
@@ -158,6 +172,12 @@ io.on('connection', (socket) => {
             if (giocatore.inAttesa) {
                 console.log(`Activating waiting player: ${giocatoreID}`);
                 giocatore.inAttesa = false;
+                // Annuncia il nuovo giocatore
+                io.emit('nuovo-messaggio-chat', {
+                    nome: "Game",
+                    messaggio: `${giocatore.nome} has joined the game!`,
+                    isSystem: true
+                });
             }
             giocatore.haGiocato = false;
         }
@@ -262,23 +282,36 @@ io.on('connection', (socket) => {
             statoPartita.giocatori[vincitoreID].punti += 1;
             statoPartita.masterCorrente = vincitoreID;
             
-            // --- MODIFICATO ---
             io.emit('annuncia-vincitore', {
                 vincitoreID: vincitoreID,
                 cartaVincitrice: testoCartaScelta,
                 cartaNera: statoPartita.cartaNeraDelTurno,
-                countdown: 10 // Invia la durata del timer
+                countdown: 10
             });
             
-            // Il server aspetta 10 secondi prima di avviare il turno
             setTimeout(() => {
                 iniziaNuovoTurno();
-            }, 10000); // 10000ms = 10 secondi
-            // --- FINE MODIFICA ---
+            }, 10000); 
             
         } else {
             console.log("Error: could not find winner for card:", testoCartaScelta);
         }
+    });
+
+    // --- NOVITÀ: Listener per la Chat ---
+    socket.on('invia-messaggio-chat', (messaggio) => {
+        if (messaggio.trim() === "") return; // Non invia messaggi vuoti
+        
+        // Trova il nome del giocatore
+        const nomeMittente = statoPartita.giocatori[socket.id] ? statoPartita.giocatori[socket.id].nome : 'Unknown';
+        
+        console.log(`Chat [${nomeMittente}]: ${messaggio}`);
+        
+        // Invia a tutti
+        io.emit('nuovo-messaggio-chat', {
+            nome: nomeMittente,
+            messaggio: messaggio.trim()
+        });
     });
 
 });

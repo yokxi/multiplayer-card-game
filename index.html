@@ -18,6 +18,17 @@
     <div id="contenitore-principale">
         
         <h1 id="titolo-gioco">Cocorido</h1> 
+        
+        <div id="chat-container">
+            <h3>Chat</h3>
+            <div id="chat-messaggi-lista">
+                </div>
+            <form id="chat-form">
+                <input id="chat-input" type="text" placeholder="Say something..." autocomplete="off">
+                <button type="submit">Send</button>
+            </form>
+        </div>
+        <button id="chat-toggle-btn">💬</button>
 
         <h2 id="stato-connessione">Disconnected ❌</h2>
         
@@ -62,6 +73,9 @@
         const btnInizia = document.getElementById('btn-inizia');
         const areaMessaggi = document.getElementById('area-messaggi');
         const titoloGiocoEl = document.getElementById('titolo-gioco');
+        
+        const contenitorePrincipale = document.getElementById('contenitore-principale');
+        
         const zonaMaster = document.getElementById('zona-master');
         const zonaCartaNera = document.getElementById('zona-carta-nera');
         const testoCartaNera = document.getElementById('testo-carta-nera');
@@ -78,6 +92,12 @@
         const profiloNomeTesto = document.getElementById('profilo-nome-testo');
         const profiloEditIcon = document.getElementById('profilo-edit-icon');
         const profiloNomeInput = document.getElementById('profilo-nome-input');
+        
+        const chatContainer = document.getElementById('chat-container');
+        const chatForm = document.getElementById('chat-form');
+        const chatInput = document.getElementById('chat-input');
+        const chatMessaggiLista = document.getElementById('chat-messaggi-lista');
+        const chatToggleBtn = document.getElementById('chat-toggle-btn'); 
 
         // Stato locale
         let mioRuolo = { isMaster: false };
@@ -86,6 +106,7 @@
         let masterCorrenteID = null;
         
         let countdownInterval = null;
+        let isChatOpen = false; 
 
         function getNomeGiocatore(id) {
             const giocatore = listaGiocatoriLocale.find(g => g.id === id);
@@ -111,6 +132,18 @@
             profiloNomeInput.style.display = 'none';
             profiloNomeTesto.style.display = 'inline-block';
             profiloEditIcon.textContent = '✏️';
+        }
+
+        function toggleChat() {
+            isChatOpen = !isChatOpen;
+            if (isChatOpen) {
+                chatContainer.classList.add('aperta');
+                chatToggleBtn.classList.remove('has-new-messages'); 
+                chatMessaggiLista.scrollTop = chatMessaggiLista.scrollHeight; 
+                chatInput.focus();
+            } else {
+                chatContainer.classList.remove('aperta');
+            }
         }
 
         // --- GESTIONE CONNESSIONE ---
@@ -167,6 +200,7 @@
             }
         });
 
+        chatToggleBtn.addEventListener('click', toggleChat); 
 
         // --- GESTIONE LISTA GIOCATORI ---
         socket.on('aggiorna-lista-giocatori', (data) => {
@@ -206,18 +240,22 @@
             
             const mioDato = giocatori.find(g => g.id === socket.id);
 
+            // Logica per mostrare/nascondere elementi UI
+            zonaProfiloGiocatore.style.display = mioDato ? 'block' : 'none'; // Sempre visibile se il giocatore esiste
+
+            if (mioDato) { // Se il mio giocatore esiste, gestisco il nome
+                profiloEditIcon.style.display = 'inline-block';
+                if (profiloNomeInput.style.display === 'none') {
+                    profiloNomeTesto.textContent = mioDato.nome;
+                }
+            }
+
+
             if (!partitaInCorso) {
                 zonaLobby.style.display = 'block';
-                titoloGiocoEl.style.display = 'block';
-                
-                if (mioDato) {
-                    zonaProfiloGiocatore.style.display = 'block';
-                    profiloEditIcon.style.display = 'inline-block';
-                    
-                    if (profiloNomeInput.style.display === 'none') {
-                        profiloNomeTesto.textContent = mioDato.nome;
-                    }
-                }
+                titoloGiocoEl.style.display = 'block'; // FAI VISIBILE IL TITOLO IN LOBBY
+                chatContainer.classList.remove('aperta'); 
+                chatToggleBtn.style.display = 'none'; // Nascondi bottone toggle in lobby
                 
                 lobbyConteggio.textContent = `Players in lobby: ${giocatori.length}`;
                 if (socket.id === hostID) {
@@ -228,23 +266,25 @@
                     const nomeHost = getNomeGiocatore(hostID);
                     lobbyAttesaHost.textContent = `Waiting for ${nomeHost} to start the game.`;
                 }
-            } else if (partitaIncorso && mioDato && mioDato.inAttesa) {
-                zonaLobby.style.display = 'block'; 
-                zonaProfiloGiocatore.style.display = 'none'; 
-                titoloGiocoEl.style.display = 'none';
-                lobbyConteggio.textContent = `Game in progress...`;
-                lobbyAttesaHost.textContent = "Waiting for the next round to join the game.";
-                btnInizia.style.display = 'none';
             } else {
+                // Se la partita è in corso...
                 zonaLobby.style.display = 'none';
-                zonaProfiloGiocatore.style.display = 'none'; 
                 titoloGiocoEl.style.display = 'none';
                 btnInizia.style.display = 'none';
+                
+                if (mioDato && mioDato.inAttesa) {
+                    zonaLobby.style.display = 'block'; 
+                    lobbyConteggio.textContent = `Game in progress...`;
+                    lobbyAttesaHost.textContent = "Waiting for the next round to join the game.";
+                    chatToggleBtn.style.display = 'none'; // Se è in attesa, non ha senso la chat di gioco
+                } else {
+                    chatToggleBtn.style.display = 'flex'; // Mostra bottone toggle solo se non in attesa
+                }
             }
         });
 
         // -----------------------------------------------------------------
-        // 🃏 LOGICA DI GIOCO
+        // 🃏 LOGICA DI GIOCO 
         // -----------------------------------------------------------------
         socket.on('nuovo-turno', (dati) => {
             if (countdownInterval) clearInterval(countdownInterval);
@@ -252,7 +292,7 @@
             masterCorrenteID = dati.masterID;
             
             zonaLobby.style.display = 'none'; 
-            zonaProfiloGiocatore.style.display = 'none'; 
+            // zonaProfiloGiocatore.style.display = 'none'; // Già gestito in aggiorna-lista-giocatori
             titoloGiocoEl.style.display = 'none';
             btnInizia.style.display = 'none';
             areaMessaggi.innerHTML = '';
@@ -260,6 +300,7 @@
             zonaCarteGiocate.innerHTML = '';
             zonaCarteGiocate.style.display = 'none';
             btnAttivaScelta.style.display = 'none'; 
+            // chatToggleBtn.style.display = 'flex'; // Rimosso da qui, gestito in aggiorna-lista-giocatori
             
             zonaCartaNera.style.display = 'block';
             testoCartaNera.textContent = dati.cartaNera;
@@ -393,9 +434,11 @@
             if (dati.vincitoreID === socket.id) {
                 messaggio = "You won this round! You are the new Master.";
                 zonaMaster.style.borderColor = "var(--colore-master)";
+                zonaMaster.style.color = "var(--colore-giocatore-ha-giocato)";
             } else {
                 messaggio = `Player ${nomeVincitore} won! They are the next Master.`; 
                 zonaMaster.style.borderColor = "var(--colore-master)";
+                zonaMaster.style.color = "var(--colore-testo-scuro)";
             }
             zonaMaster.textContent = messaggio;
             zonaMaster.style.display = 'block';
@@ -404,7 +447,6 @@
 
             if (countdownInterval) clearInterval(countdownInterval);
 
-            // --- MODIFICATO: Aggiunto il testo "Next round starts in..." ---
             infoMaster.textContent = `Next round starts in ${timer}...`; 
 
             countdownInterval = setInterval(() => {
@@ -416,7 +458,51 @@
                     clearInterval(countdownInterval);
                 }
             }, 1000);
-            // --- Fine MODIFICA ---
+        });
+        
+        // --- Logica della Chat ---
+        
+        chatForm.addEventListener('submit', (e) => {
+            e.preventDefault(); 
+            const messaggio = chatInput.value;
+            
+            if (messaggio.trim() !== '') {
+                socket.emit('invia-messaggio-chat', messaggio);
+                chatInput.value = '';
+            }
+        });
+        
+        socket.on('nuovo-messaggio-chat', (data) => {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'messaggio-chat';
+            
+            if (data.isSystem) {
+                msgDiv.classList.add('sistema');
+                msgDiv.textContent = data.messaggio;
+            } else {
+                const nomeSpan = document.createElement('span');
+                nomeSpan.className = 'nome';
+                nomeSpan.textContent = `${data.nome}: `;
+                
+                if (data.nome === getNomeGiocatore(socket.id)) {
+                    msgDiv.classList.add('tu');
+                }
+                
+                const testoSpan = document.createElement('span');
+                testoSpan.className = 'testo';
+                testoSpan.textContent = data.messaggio;
+                
+                msgDiv.appendChild(nomeSpan);
+                msgDiv.appendChild(testoSpan);
+            }
+            
+            chatMessaggiLista.appendChild(msgDiv);
+            
+            if (!isChatOpen) {
+                chatToggleBtn.classList.add('has-new-messages');
+            } else {
+                chatMessaggiLista.scrollTop = chatMessaggiLista.scrollHeight; 
+            }
         });
 
     </script>
