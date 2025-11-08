@@ -8,9 +8,15 @@ const io = socketIo(server);
 const PORTA = 3000;
 app.use(express.static(__dirname));
 
+// -----------------------------------------------------------------
+// 🃏 CARD DECKS
+// -----------------------------------------------------------------
 const MAZZO_CARTE_NERE = require('./decks/black_cards.json');
 const MAZZO_CARTE_BIANCHE = require('./decks/white_cards.json');
 
+// -----------------------------------------------------------------
+// 🔧 SHUFFLE FUNCTION
+// -----------------------------------------------------------------
 function mischiaMazzo(mazzo) {
     let mazzoMischiato = [...mazzo]; 
     for (let i = mazzoMischiato.length - 1; i > 0; i--) {
@@ -20,8 +26,11 @@ function mischiaMazzo(mazzo) {
     return mazzoMischiato;
 }
 
+// -----------------------------------------------------------------
+// 📈 GAME STATE
+// -----------------------------------------------------------------
 let statoPartita = {
-    giocatori: {}, 
+    giocatori: {}, // socket.id -> { id, punti, mano, nome, inAttesa, haGiocato }
     mazzoNero: [],
     mazzoBianco: [],
     carteScartateBianche: [],
@@ -48,6 +57,9 @@ function pescaCartaBianca() {
     return statoPartita.mazzoBianco.pop();
 }
 
+// -----------------------------------------------------------------
+// 👥 UPDATE PLAYER LIST FUNCTION
+// -----------------------------------------------------------------
 function aggiornaELinviaListaGiocatori() {
     const hostID = Object.keys(statoPartita.giocatori)[0] || null;
     
@@ -66,6 +78,7 @@ function aggiornaELinviaListaGiocatori() {
     });
 }
 
+// 4. Socket.io Main Logic
 io.on('connection', (socket) => {
     
     console.log(`🎉 A new player connected! ID: ${socket.id}`);
@@ -74,20 +87,20 @@ io.on('connection', (socket) => {
         id: socket.id,
         punti: 0,
         mano: [],
-        nome: "Player" + playerCounter, 
+        nome: "Player" + playerCounter,
         inAttesa: statoPartita.partitaInCorso,
         haGiocato: false
     };
-    playerCounter++; 
+    playerCounter++;
     
-    aggiornaELinviaListaGiocatori(); 
+    aggiornaELinviaListaGiocatori();
 
     socket.on('disconnect', () => {
         console.log(`😢 A player disconnected: ${socket.id}`);
         delete statoPartita.giocatori[socket.id];
         
         if (Object.keys(statoPartita.giocatori).length === 0) {
-            playerCounter = 1; 
+            playerCounter = 1;
         }
         
         aggiornaELinviaListaGiocatori(); 
@@ -248,14 +261,21 @@ io.on('connection', (socket) => {
         if (vincitoreID && statoPartita.giocatori[vincitoreID]) {
             statoPartita.giocatori[vincitoreID].punti += 1;
             statoPartita.masterCorrente = vincitoreID;
+            
+            // --- MODIFICATO ---
             io.emit('annuncia-vincitore', {
                 vincitoreID: vincitoreID,
                 cartaVincitrice: testoCartaScelta,
-                cartaNera: statoPartita.cartaNeraDelTurno
+                cartaNera: statoPartita.cartaNeraDelTurno,
+                countdown: 10 // Invia la durata del timer
             });
+            
+            // Il server aspetta 10 secondi prima di avviare il turno
             setTimeout(() => {
                 iniziaNuovoTurno();
-            }, 5000); 
+            }, 10000); // 10000ms = 10 secondi
+            // --- FINE MODIFICA ---
+            
         } else {
             console.log("Error: could not find winner for card:", testoCartaScelta);
         }
@@ -263,6 +283,7 @@ io.on('connection', (socket) => {
 
 });
 
+// 5. Start Server
 server.listen(PORTA, () => {
     console.log(`🚀 Server listening on port ${PORTA}`);
     console.log(`Open http://localhost:${PORTA} in your browser to play!`);

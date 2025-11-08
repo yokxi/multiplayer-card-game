@@ -1,0 +1,312 @@
+/* --- CENTRALE DI CONTROLLO COLORI (Palette "Blu Notte") --- */
+:root {
+    /* Colori di Sfondo */
+    --colore-sfondo-pagina: #1A202C; /* Blu scurissimo */
+    --colore-sfondo-sidebar: #2D3748; /* Blu scuro */
+    --colore-sfondo-elemento-sidebar: #4A5568; /* Grigio-blu */
+    --colore-sfondo-box: white;
+    --colore-sfondo-lobby: white;
+    --colore-sfondo-messaggio: #FFFFE0; /* Giallo chiaro */
+    --colore-sfondo-carta-nera: #222;
+    --colore-sfondo-carta-coperta: #888;
+    
+    /* Colori del Testo */
+    --colore-testo-sidebar: #E2E8F0; /* Testo chiaro */
+    --colore-testo-chiaro: #A0AEC0; /* Grigio chiaro */
+    --colore-testo-scuro: #1A202C; /* Testo scuro (su sfondi chiari) */
+    --colore-testo-intermedio: #4A5568;
+    --colore-testo-titolo: #63B3ED; /* Blu brillante */
+    --colore-testo-profilo: #63B3ED; /* Blu brillante */
+
+    /* Colori di Stato (Giocatori) */
+    --colore-giocatore-tu: #553C9A; /* Blu brillante */
+    --colore-giocatore-ha-giocato: #48BB78; /* Verde */
+    --colore-master: #ECC94B; /* Giallo oro */
+    --colore-giocatore-in-attesa-bg: #2D3748;
+    --colore-giocatore-in-attesa-testo: #718096;
+    
+    /* Colori dei Pulsanti */
+    --colore-btn-start-bg: var(--colore-giocatore-tu);
+    --colore-btn-start-testo: white;
+    --colore-btn-start-hover: #4299E1;
+    --colore-btn-scegli-bg: var(--colore-master);
+    --colore-btn-scegli-testo: var(--colore-testo-scuro);
+    --colore-btn-scegli-hover: #D69E2E;
+
+    /* Colori delle Carte */
+    --colore-bordo-carta-coperta: #555;
+    --colore-bordo-carta-bianca: #ccc;
+    --colore-carta-selezionabile-bg: #EBF8FF; /* Sfondo Blu chiarissimo */
+    --colore-carta-selezionabile-bordo: var(--colore-giocatore-tu);
+    --colore-carta-selezionabile-hover: #BEE3F8;
+    --colore-carta-vincitrice-bordo: var(--colore-master);
+    
+    /* Colori Ombre */
+    --colore-ombra-leggera: rgba(0,0,0,0.05);
+    --colore-ombra-sidebar: rgba(0,0,0,0.1);
+    --colore-ombra-carta: rgba(0,0,0,0.1);
+    --colore-ombra-carta-hover: rgba(0,0,0,0.15);
+    --colore-ombra-carta-nera: rgba(0,0,0,0.2);
+    --colore-ombra-titolo-scura: rgba(0, 0, 0, 0.4);
+    --colore-ombra-titolo-chiara: rgba(255, 255, 255, 0.2);
+}
+/* --- FINE CENTRALE DI CONTROLLO --- */
+
+
+html, body {
+    margin: 0; padding: 0; height: 100%;
+    font-family: Arial, sans-serif;
+    background-color: var(--colore-sfondo-pagina);
+    overflow: hidden;
+}
+body { display: flex; flex-direction: row; }
+
+#zona-giocatori-sidebar {
+    flex: 0 0 280px; 
+    background-color: var(--colore-sfondo-sidebar);
+    color: var(--colore-testo-sidebar); 
+    padding: 20px; height: 100vh;
+    box-shadow: 2px 0 5px var(--colore-ombra-sidebar);
+    overflow-y: auto; box-sizing: border-box;
+}
+#zona-giocatori-sidebar h2 {
+    margin-top: 0;
+    text-align: center;
+    background-color: var(--colore-sfondo-carta-nera);
+    color: var(--colore-testo-sidebar);
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+.giocatore-sidebar-item {
+    background-color: var(--colore-elemento-sidebar);
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border: 2px solid var(--colore-sfondo-sidebar);
+    transition: all 0.3s ease; 
+    text-align: center;
+}
+.giocatore-nome {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: inline-block;
+}
+.giocatore-punti {
+    font-size: 0.9em;
+    color: var(--colore-testo-chiaro);
+    font-weight: normal;
+}
+
+.giocatore-sidebar-item.tu {
+    background-color: var(--colore-giocatore-tu);
+    border-color: var(--colore-giocatore-tu);
+}
+.giocatore-sidebar-item.in-attesa {
+    background-color: var(--colore-giocatore-in-attesa-bg);
+    color: var(--colore-giocatore-in-attesa-testo);
+    border-color: var(--colore-elemento-sidebar);
+}
+.giocatore-sidebar-item.ha-giocato {
+    background-color: var(--colore-giocatore-ha-giocato);
+    border-color: var(--colore-giocatore-tu);
+}
+.giocatore-sidebar-item.master-turno {
+    border-color: var(--colore-master);
+}
+.giocatore-sidebar-item.master-turno.tu {
+    background-color: var(--colore-giocatore-tu);
+}
+
+#contenitore-principale {
+    flex: 1; height: 100vh;
+    overflow-y: auto; padding: 30px; 
+    box-sizing: border-box; text-align: center;
+    position: relative; 
+}
+
+#titolo-gioco {
+    font-family: 'Impact', 'Arial Black', sans-serif;
+    font-size: 6em;
+    color: var(--colore-testo-titolo);
+    text-shadow: 4px 4px 6px var(--colore-ombra-titolo-scura), 
+                 -4px -4px 6px var(--colore-ombra-titolo-chiara);
+    text-align: center;
+    margin-top: 50px;
+    margin-bottom: 40px;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    display: none;
+}
+
+#stato-connessione { 
+    font-weight: bold; 
+    margin-bottom: 5px;
+    display: none;
+}
+
+#zona-profilo-giocatore {
+    background-color: var(--colore-sfondo-box);
+    border: 2px solid var(--colore-giocatore-tu);
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 600px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px var(--colore-ombra-leggera);
+}
+#zona-profilo-giocatore h3 {
+    margin-top: 0;
+    color: var(--colore-testo-intermedio);
+}
+.profilo-nome-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: var(--colore-testo-profilo);
+}
+.profilo-edit-icon {
+    font-size: 0.8em;
+    margin-left: 10px;
+    cursor: pointer;
+    opacity: 0.7;
+}
+.profilo-edit-icon:hover {
+    opacity: 1;
+}
+
+#profilo-nome-input {
+    font-family: Arial, sans-serif;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: var(--colore-testo-profilo);
+    border: none;
+    border-bottom: 2px solid var(--colore-testo-chiaro);
+    background: none;
+    text-align: center;
+    padding: 0;
+    width: 60%; 
+}
+#profilo-nome-input:focus {
+    outline: none;
+    border-bottom: 2px solid var(--colore-giocatore-tu);
+}
+
+#zona-lobby {
+    background-color: var(--colore-sfondo-lobby); 
+    border: 1px dashed var(--colore-testo-chiaro);
+    padding: 20px; margin: 20px auto; max-width: 600px;
+    border-radius: 8px;
+}
+#zona-lobby h3 { margin-top: 0; }
+
+#btn-inizia {
+    font-size: 20px; padding: 15px 30px; cursor: pointer;
+    background-color: var(--colore-btn-start-bg);
+    color: var(--colore-btn-start-testo); 
+    border: none;
+    border-radius: 5px;
+    display: block;
+    margin: 20px auto;
+}
+#btn-inizia:hover { 
+    background-color: var(--colore-btn-start-hover);
+}
+
+#btn-attiva-scelta {
+    font-size: 18px; padding: 12px 25px; cursor: pointer;
+    background-color: var(--colore-btn-scegli-bg);
+    color: var(--colore-btn-scegli-testo);
+    border: none;
+    border-radius: 5px; margin: 20px auto;
+    display: none;
+}
+#btn-attiva-scelta:hover { 
+    background-color: var(--colore-btn-scegli-hover);
+}
+
+#area-gioco { margin-top: 20px; max-width: 900px; margin-left: auto; margin-right: auto;}
+#zona-master {
+    background-color: var(--colore-sfondo-messaggio); 
+    padding: 15px; border-radius: 8px;
+    border: 2px solid var(--colore-master);
+    font-size: 1.2em; font-weight: bold;
+    display: none; max-width: 600px; margin: 20px auto;
+    color: var(--colore-testo-scuro); /* Assicura leggibilità su sfondo chiaro */
+}
+#zona-carta-nera { display: none; max-width: 600px; margin: 20px auto; }
+.carta-nera {
+    background-color: var(--colore-sfondo-carta-nera);
+    color: var(--colore-testo-sidebar); 
+    padding: 30px 20px;
+    border-radius: 12px; font-size: 1.5em; font-weight: bold;
+    min-height: 150px; display: flex; align-items: center;
+    justify-content: center; box-shadow: 0 4px 8px var(--colore-ombra-carta-nera);
+    line-height: 1.4;
+}
+#info-master { 
+    font-weight: bold;
+    color: var(--colore-testo-chiaro); /* Testo chiaro su sfondo scuro */
+}
+#zona-mano-giocatore {
+    display: flex; flex-wrap: wrap; justify-content: center;
+    gap: 15px; margin-top: 30px; padding-bottom: 30px;
+}
+#zona-carte-giocate {
+    display: flex; flex-direction: row;
+    flex-wrap: wrap; justify-content: center;
+    gap: 15px; margin-top: 30px; padding-bottom: 30px;
+}
+.carta-coperta {
+    background-color: var(--colore-sfondo-carta-coperta); 
+    border: 2px solid var(--colore-bordo-carta-coperta);
+    border-radius: 10px; width: 150px; min-height: 180px;
+    box-shadow: 0 2px 4px var(--colore-ombra-carta); 
+    transition: all 0.2s ease;
+}
+.carta-coperta.cliccabile { cursor: pointer; }
+.carta-coperta.cliccabile:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px var(--colore-ombra-carta-hover); 
+    border-color: var(--colore-master);
+}
+.carta-bianca {
+    background-color: var(--colore-sfondo-box); 
+    color: var(--colore-testo-scuro); 
+    border: 1px solid var(--colore-bordo-carta-bianca);
+    border-radius: 10px; padding: 20px 15px; font-size: 1.1em;
+    font-weight: 500; width: 150px; min-height: 180px;
+    box-shadow: 0 2px 4px var(--colore-ombra-carta); 
+    display: flex;
+    align-items: center; justify-content: center; transition: all 0.2s ease;
+}
+.carta-giocabile { cursor: pointer; }
+.carta-giocabile:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 6px 12px var(--colore-ombra-carta-hover); 
+    border-color: var(--colore-giocatore-tu);
+}
+.carta-scelta {
+    background-color: var(--colore-carta-selezionabile-bg);
+    color: var(--colore-testo-scuro); 
+    border: 2px dashed var(--colore-carta-selezionabile-bordo);
+    border-radius: 10px; padding: 20px 15px; font-size: 1.1em;
+    font-weight: 500; width: 150px; min-height: 180px;
+    box-shadow: 0 2px 4px var(--colore-ombra-carta); 
+    display: flex;
+    align-items: center; justify-content: center; cursor: pointer;
+    transition: all 0.2s ease;
+}
+.carta-scelta:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px var(--colore-ombra-carta-hover); 
+    background-color: var(--colore-carta-selezionabile-hover);
+}
+.carta-vincitrice {
+    border: 4px solid var(--colore-carta-vincitrice-bordo);
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px var(--colore-ombra-carta-nera);
+}
