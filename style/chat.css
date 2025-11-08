@@ -1,46 +1,57 @@
 #chat-container {
-    position: absolute; 
-    top: 20px;
-    right: -310px; /* Nascosta fuori schermo */
-    width: 280px; 
-    z-index: 1000;
+    width: auto; 
+    height: 300px; /* <-- MODIFICATO: Altezza chat aumentata */
     
     background-color: var(--colore-sfondo-sidebar);
     border: 2px solid var(--colore-elemento-sidebar);
     border-radius: 8px;
-    padding: 15px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    padding: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    box-sizing: border-box;
     
-    transition: right 0.3s ease-out; /* Animazione fluida */
-}
-
-#chat-container.aperta {
-    right: 20px; /* Visibile */
+    display: flex;
+    flex-direction: column;
 }
 
 #chat-container h3 {
     margin-top: 0;
     text-align: center;
     color: var(--colore-testo-sidebar);
-    border-bottom: 2px solid var(--colore-elemento-sidebar);
-    padding-bottom: 10px;
+    border-bottom: 1px solid var(--colore-elemento-sidebar);
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+    font-size: 1.1em;
 }
 
 #chat-messaggi-lista {
-    height: 180px; 
+    flex-grow: 1; 
     overflow-y: auto; 
     background-color: var(--colore-chat-sfondo-messaggio); 
     border: 1px solid var(--colore-elemento-sidebar);
-    border-radius: 6px;
-    padding: 10px;
-    margin-bottom: 10px;
+    border-radius: 4px;
+    padding: 8px;
+    margin-bottom: 8px;
     text-align: left;
+    display: flex; 
+    flex-direction: column; 
+    font-size: 0.9em;
+}
+#chat-messaggi-lista::-webkit-scrollbar {
+    width: 6px;
+}
+#chat-messaggi-lista::-webkit-scrollbar-thumb {
+    background-color: var(--colore-testo-chiaro);
+    border-radius: 3px;
+}
+#chat-messaggi-lista::-webkit-scrollbar-track {
+    background-color: var(--colore-sfondo-sidebar);
 }
 
 .messaggio-chat {
-    margin-bottom: 8px;
-    word-wrap: break-word; 
+    margin-bottom: 6px; 
     color: var(--colore-chat-testo-messaggio); 
+    word-wrap: break-word;
+    overflow-wrap: break-word; 
 }
 
 .messaggio-chat .nome {
@@ -55,12 +66,13 @@
 .messaggio-chat.sistema {
     color: var(--colore-testo-intermedio);
     font-style: italic;
-    font-size: 0.9em;
+    font-size: 0.8em;
 }
 
 #chat-form {
     display: flex;
     gap: 5px;
+    margin-top: auto; 
 }
 
 #chat-input {
@@ -68,8 +80,9 @@
     background-color: var(--colore-sfondo-pagina);
     border: 1px solid var(--colore-testo-chiaro);
     color: var(--colore-testo-sidebar); 
-    border-radius: 5px;
-    padding: 8px;
+    border-radius: 4px;
+    padding: 6px;
+    font-size: 0.9em;
 }
 #chat-input:focus {
     outline: none;
@@ -80,50 +93,18 @@
     background-color: var(--colore-giocatore-tu);
     color: var(--colore-btn-start-testo);
     border: none;
-    border-radius: 5px;
-    padding: 0 15px;
+    border-radius: 4px;
+    
+    /* <-- MODIFICATO: Bottone "Send" meno lungo */
+    width: 50px; /* Larghezza fissa */
+    height: 30px; /* Altezza fissa */
+    line-height: 30px; /* Centra verticalmente il testo */
+    padding: 0; /* Rimuovi padding */
+
     cursor: pointer;
     font-weight: bold;
+    font-size: 0.9em;
 }
 #chat-form button:hover {
     background-color: #4299E1;
-}
-
-#chat-toggle-btn {
-    position: absolute;
-    top: 20px;
-    right: 20px; 
-    width: 40px;
-    height: 40px;
-    background-color: var(--colore-giocatore-tu);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    font-size: 1.5em;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    z-index: 1001; 
-    transition: background-color 0.2s ease, transform 0.2s ease, right 0.3s ease-out; 
-    display: none; 
-}
-#chat-toggle-btn:hover {
-    background-color: #4299E1;
-    transform: scale(1.05);
-}
-
-#chat-toggle-btn.has-new-messages {
-    background-color: var(--colore-chat-notifica);
-    animation: pulse 1s infinite alternate;
-}
-
-#chat-toggle-btn.chat-aperta {
-    right: 310px; /* 280px (chat) + 20px (margine dx chat) + 10px (spazio) */
-}
-
-@keyframes pulse {
-    from { transform: scale(1); }
-    to { transform: scale(1.1); }
 }

@@ -11,13 +11,7 @@
 <body>
 
     <div id="zona-giocatori-sidebar">
-        <h2>Players</h2>
         <div id="lista-giocatori-container"></div>
-    </div>
-    
-    <div id="contenitore-principale">
-        
-        <h1 id="titolo-gioco">Cocorido</h1> 
         
         <div id="chat-container">
             <h3>Chat</h3>
@@ -28,9 +22,12 @@
                 <button type="submit">Send</button>
             </form>
         </div>
+    </div>
+    
+    <div id="contenitore-principale">
         
-        <button id="chat-toggle-btn">💬</button>
-
+        <h1 id="titolo-gioco">Cocorido</h1> 
+        
         <h2 id="stato-connessione">Disconnected ❌</h2>
         
         <div id="zona-profilo-giocatore" style="display: none;">
@@ -98,7 +95,7 @@
         const chatForm = document.getElementById('chat-form');
         const chatInput = document.getElementById('chat-input');
         const chatMessaggiLista = document.getElementById('chat-messaggi-lista');
-        const chatToggleBtn = document.getElementById('chat-toggle-btn');
+        
 
         // Stato locale
         let mioRuolo = { isMaster: false };
@@ -107,7 +104,7 @@
         let masterCorrenteID = null;
         
         let countdownInterval = null;
-        let isChatOpen = false; 
+        
 
         function getNomeGiocatore(id) {
             const giocatore = listaGiocatoriLocale.find(g => g.id === id);
@@ -133,23 +130,6 @@
             profiloNomeInput.style.display = 'none';
             profiloNomeTesto.style.display = 'inline-block';
             profiloEditIcon.textContent = '✏️';
-        }
-
-        // --- Funzione per aprire/chiudere la chat (MODIFICATA) ---
-        function toggleChat() {
-            isChatOpen = !isChatOpen;
-            if (isChatOpen) {
-                chatContainer.classList.add('aperta');
-                contenitorePrincipale.classList.add('chat-attiva'); // Spinge il contenuto
-                chatToggleBtn.classList.add('chat-aperta'); // Sposta il bottone
-                chatToggleBtn.classList.remove('has-new-messages'); // Rimuovi notifica
-                chatMessaggiLista.scrollTop = chatMessaggiLista.scrollHeight; // Scrolla in fondo
-                chatInput.focus();
-            } else {
-                chatContainer.classList.remove('aperta');
-                contenitorePrincipale.classList.remove('chat-attiva'); // Rilascia il contenuto
-                chatToggleBtn.classList.remove('chat-aperta'); // Rimette il bottone a posto
-            }
         }
 
         // --- GESTIONE CONNESSIONE ---
@@ -205,9 +185,7 @@
                 salvaModificaNome();
             }
         });
-
-        chatToggleBtn.addEventListener('click', toggleChat); 
-
+        
         // --- GESTIONE LISTA GIOCATORI ---
         socket.on('aggiorna-lista-giocatori', (data) => {
             const { giocatori, hostID, partitaInCorso } = data;
@@ -249,10 +227,6 @@
             if (!partitaInCorso) {
                 zonaLobby.style.display = 'block';
                 titoloGiocoEl.style.display = 'block';
-                chatToggleBtn.style.display = 'none'; // Nascondi bottone toggle
-                chatContainer.classList.remove('aperta'); // Resetta stato
-                contenitorePrincipale.classList.remove('chat-attiva'); // Resetta padding
-                chatToggleBtn.classList.remove('chat-aperta'); // Resetta posizione bottone
                 
                 if (mioDato) {
                     zonaProfiloGiocatore.style.display = 'block';
@@ -283,9 +257,6 @@
                     zonaLobby.style.display = 'block'; 
                     lobbyConteggio.textContent = `Game in progress...`;
                     lobbyAttesaHost.textContent = "Waiting for the next round to join the game.";
-                    chatToggleBtn.style.display = 'none'; // Nascondi se in attesa
-                } else {
-                    chatToggleBtn.style.display = 'flex'; // Mostra bottone toggle
                 }
             }
         });
@@ -307,7 +278,6 @@
             zonaCarteGiocate.innerHTML = '';
             zonaCarteGiocate.style.display = 'none';
             btnAttivaScelta.style.display = 'none'; 
-            chatToggleBtn.style.display = 'flex'; // Mostra bottone
             
             zonaCartaNera.style.display = 'block';
             testoCartaNera.textContent = dati.cartaNera;
@@ -505,11 +475,8 @@
             
             chatMessaggiLista.appendChild(msgDiv);
             
-            if (!isChatOpen) {
-                chatToggleBtn.classList.add('has-new-messages');
-            } else {
-                chatMessaggiLista.scrollTop = chatMessaggiLista.scrollHeight; 
-            }
+            // La chat è sempre aperta, quindi scrolliamo sempre in fondo
+            chatMessaggiLista.scrollTop = chatMessaggiLista.scrollHeight; 
         });
 
     </script>

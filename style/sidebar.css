@@ -1,38 +1,51 @@
 #zona-giocatori-sidebar {
-    flex: 0 0 200px; 
+    flex: 0 0 300px; /* Larghezza colonna giocatori */
     background-color: var(--colore-sfondo-sidebar);
     color: var(--colore-testo-sidebar); 
-    padding: 20px; height: 100vh;
+    padding: 10px 20px 20px 20px; /* <-- MODIFICATO: Padding superiore ridotto */
+    height: 100vh;
     box-shadow: 2px 0 5px var(--colore-ombra-sidebar);
-    overflow-y: auto; box-sizing: border-box;
+    overflow-y: hidden; 
+    box-sizing: border-box;
+
+    display: flex;
+    flex-direction: column;
 }
-#zona-giocatori-sidebar h2 {
+
+/* RIMOSSO: Stili per h2 non più necessario */
+/* #zona-giocatori-sidebar h2 {
     margin-top: 0;
     text-align: center;
-    background-color: var(--colore-sfondo-carta-nera);
     color: var(--colore-testo-sidebar);
-    padding-top: 10px;
     padding-bottom: 10px;
-    border-radius: 8px;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
+    border-bottom: 2px solid var(--colore-elemento-sidebar); 
+} */
+
+#lista-giocatori-container {
+    flex-grow: 1; 
+    overflow-y: auto; 
+    margin-bottom: 15px; 
 }
+
 .giocatore-sidebar-item {
     background-color: var(--colore-elemento-sidebar);
-    padding: 12px 15px;
+    padding: 8px 10px; 
     border-radius: 8px;
-    margin-bottom: 10px;
+    margin-bottom: 6px; 
     border: 2px solid var(--colore-sfondo-sidebar);
     transition: all 0.3s ease; 
     text-align: center;
 }
 .giocatore-nome {
-    font-size: 1.2em;
+    font-size: 1em; 
     font-weight: bold;
-    margin-bottom: 5px;
+    margin-bottom: 3px; 
     display: inline-block;
+    word-break: break-all;
 }
 .giocatore-punti {
-    font-size: 0.9em;
+    font-size: 0.85em; 
     color: var(--colore-testo-chiaro);
     font-weight: normal;
 }
