@@ -1,32 +1,30 @@
-/* --- CENTRALE DI CONTROLLO COLORI (Palette "Blu Notte") --- */
 :root {
-    /* Colori di Sfondo */
-    --colore-sfondo-pagina: #1A202C; /* Blu scurissimo */
-    --colore-sfondo-sidebar: #2D3748; /* Blu scuro */
-    --colore-sfondo-elemento-sidebar: #4A5568; /* Grigio-blu */
+    --colore-sfondo-pagina: #1A202C; 
+    --colore-sfondo-sidebar: #2D3748; 
+    --colore-sfondo-elemento-sidebar: #4A5568; 
     --colore-sfondo-box: white;
     --colore-sfondo-lobby: white;
-    --colore-sfondo-messaggio: #FFFFE0; /* Giallo chiaro */
+    --colore-sfondo-messaggio: #FFFFE0; 
     --colore-sfondo-carta-nera: #222;
     --colore-sfondo-carta-coperta: #888;
     
     /* Colori del Testo */
-    --colore-testo-sidebar: #E2E8F0; /* Testo chiaro */
-    --colore-testo-chiaro: #A0AEC0; /* Grigio chiaro */
-    --colore-testo-scuro: #1A202C; /* Testo scuro (su sfondi chiari) */
+    --colore-testo-sidebar: #E2E8F0; 
+    --colore-testo-chiaro: #A0AEC0; 
+    --colore-testo-scuro: #1A202C; 
     --colore-testo-intermedio: #4A5568;
-    --colore-testo-titolo: #63B3ED; /* Blu brillante */
-    --colore-testo-profilo: #63B3ED; /* Blu brillante */
+    --colore-testo-titolo: #63B3ED; 
+    --colore-testo-profilo: #63B3ED; 
 
     /* Colori di Stato (Giocatori) */
-    --colore-giocatore-tu: #3182CE; /* Blu Intenso */
-    --colore-giocatore-ha-giocato: #48BB78; /* Verde */
-    --colore-master: #ECC94B; /* Giallo oro */
+    --colore-giocatore-tu: #3182CE; 
+    --colore-giocatore-ha-giocato: #48BB78; 
+    --colore-master: #ECC94B; 
     --colore-giocatore-in-attesa-bg: #2D3748;
     --colore-giocatore-in-attesa-testo: #718096;
     
     /* Colori dei Pulsanti */
-    --colore-btn-start-bg: #63B3ED; /* Blu brillante */
+    --colore-btn-start-bg: #63B3ED; 
     --colore-btn-start-testo: white;
     --colore-btn-start-hover: #4299E1;
     --colore-btn-scegli-bg: var(--colore-master);
@@ -36,7 +34,7 @@
     /* Colori delle Carte */
     --colore-bordo-carta-coperta: #555;
     --colore-bordo-carta-bianca: #ccc;
-    --colore-carta-selezionabile-bg: #EBF8FF; /* Sfondo Blu chiarissimo */
+    --colore-carta-selezionabile-bg: #EBF8FF; 
     --colore-carta-selezionabile-bordo: var(--colore-giocatore-tu);
     --colore-carta-selezionabile-hover: #BEE3F8;
     --colore-carta-vincitrice-bordo: var(--colore-master);
@@ -51,7 +49,7 @@
     --colore-ombra-titolo-chiara: rgba(255, 255, 255, 0.2);
 
     /* Colori Chat */
-    --colore-chat-sfondo-messaggio: #1A202C; /* Sfondo scuro */
-    --colore-chat-testo-messaggio: #E2E8F0; /* Testo chiaro */
-    --colore-chat-notifica: #E53E3E; /* Rosso per nuove notifiche */
+    --colore-chat-sfondo-messaggio: #1A202C; 
+    --colore-chat-testo-messaggio: #E2E8F0; 
+    --colore-chat-notifica: #E53E3E; 
 }

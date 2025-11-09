@@ -2,7 +2,7 @@ html, body {
     margin: 0; padding: 0; height: 100%;
     font-family: Arial, sans-serif;
     background-color: var(--colore-sfondo-pagina);
-    overflow: hidden; /* Per evitare scrollbar quando la chat è fuori */
+    overflow: hidden;
 }
 body { display: flex; flex-direction: row; }
 
@@ -11,10 +11,71 @@ body { display: flex; flex-direction: row; }
     overflow-y: auto; padding: 30px; 
     box-sizing: border-box; text-align: center;
     position: relative; 
-    transition: padding-right 0.3s ease-out; /* Transizione per il padding */
+    transition: padding-right 0.3s ease-out; 
 }
 
-/* Classe per "spingere" il contenuto */
 #contenitore-principale.chat-attiva {
-    padding-right: 330px; /* Larghezza chat (280) + margin-right chat (20) + padding extra (30) */
+    padding-right: 330px; 
+}
+
+#controlli-audio {
+    position: absolute;
+    top: 20px;
+    right: 30px; 
+    display: flex;
+    flex-direction: column; 
+    gap: 10px; 
+    z-index: 100;
+}
+
+.controllo-volume-gruppo {
+    display: flex;
+    align-items: center;
+    background-color: var(--colore-sfondo-sidebar);
+    padding: 5px 10px;
+    border-radius: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.icona-volume {
+    font-size: 1.4em;
+    cursor: pointer;
+    margin-right: 8px;
+    user-select: none; 
+    width: 25px; 
+    text-align: center;
+    opacity: 0.8;
+}
+.icona-volume:hover {
+    opacity: 1;
+}
+
+.slider-volume {
+    width: 100px;
+    cursor: pointer;
+    /* Stile per Chrome/Safari */
+    -webkit-appearance: none;
+    appearance: none;
+    height: 8px;
+    background: var(--colore-elemento-sidebar);
+    border-radius: 5px;
+    outline: none;
+}
+.slider-volume::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    background: var(--colore-testo-sidebar);
+    border-radius: 50%;
+    cursor: pointer;
+}
+/* Stile per Firefox */
+.slider-volume::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background: var(--colore-testo-sidebar);
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
 }

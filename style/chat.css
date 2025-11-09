@@ -1,6 +1,6 @@
 #chat-container {
     width: auto; 
-    height: 300px; /* <-- MODIFICATO: Altezza chat aumentata */
+    height: 300px; 
     
     background-color: var(--colore-sfondo-sidebar);
     border: 2px solid var(--colore-elemento-sidebar);
@@ -95,11 +95,10 @@
     border: none;
     border-radius: 4px;
     
-    /* <-- MODIFICATO: Bottone "Send" meno lungo */
-    width: 50px; /* Larghezza fissa */
-    height: 30px; /* Altezza fissa */
-    line-height: 30px; /* Centra verticalmente il testo */
-    padding: 0; /* Rimuovi padding */
+    width: 50px; 
+    height: 30px; 
+    line-height: 30px; 
+    padding: 0; 
 
     cursor: pointer;
     font-weight: bold;

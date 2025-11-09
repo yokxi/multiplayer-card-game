@@ -25,6 +25,17 @@
     </div>
     
     <div id="contenitore-principale">
+
+        <div id="controlli-audio">
+            <div class="controllo-volume-gruppo">
+                <span id="icona-volume-musica" class="icona-volume">🎵</span>
+                <input type="range" id="slider-volume-musica" class="slider-volume" min="0" max="100" value="30">
+            </div>
+            <div class="controllo-volume-gruppo">
+                <span id="icona-volume-sfx" class="icona-volume">🔊</span>
+                <input type="range" id="slider-volume-sfx" class="slider-volume" min="0" max="100" value="80">
+            </div>
+        </div>
         
         <h1 id="titolo-gioco">Cocorido</h1> 
         
@@ -62,6 +73,10 @@
 
     </div> 
 
+    <audio id="musica-sfondo" src="sound/background-music.mp3" loop></audio>
+    <audio id="sfx-carta-girata" src="sound/card-flip.mp3" preload="auto"></audio>
+    <audio id="sfx-vincitore" src="sound/win-round.mp3" preload="auto"></audio>
+
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
@@ -95,6 +110,21 @@
         const chatForm = document.getElementById('chat-form');
         const chatInput = document.getElementById('chat-input');
         const chatMessaggiLista = document.getElementById('chat-messaggi-lista');
+
+        const musicaSfondo = document.getElementById('musica-sfondo');
+        const iconaVolumeMusica = document.getElementById('icona-volume-musica');
+        const sliderVolumeMusica = document.getElementById('slider-volume-musica');
+        
+        const iconaVolumeSfx = document.getElementById('icona-volume-sfx');
+        const sliderVolumeSfx = document.getElementById('slider-volume-sfx');
+        
+        // Audio SFX
+        const sfxCartaGirata = document.getElementById('sfx-carta-girata');
+        const sfxVincitore = document.getElementById('sfx-vincitore');
+        
+        // Stato volume 
+        let sfxVolume = sliderVolumeSfx.value / 100;
+        let sfxMuted = false;
         
 
         // Stato locale
@@ -132,7 +162,7 @@
             profiloEditIcon.textContent = '✏️';
         }
 
-        // --- GESTIONE CONNESSIONE ---
+        // gestione connessione
         socket.on('connect', () => {
             statoConnessioneEl.style.display = 'none';
         });
@@ -186,7 +216,7 @@
             }
         });
         
-        // --- GESTIONE LISTA GIOCATORI ---
+        // gestione lista giocatori
         socket.on('aggiorna-lista-giocatori', (data) => {
             const { giocatori, hostID, partitaInCorso } = data;
             listaGiocatoriLocale = giocatori; 
@@ -247,7 +277,6 @@
                     lobbyAttesaHost.textContent = `Waiting for ${nomeHost} to start the game.`;
                 }
             } else {
-                // Se la partita è in corso...
                 zonaLobby.style.display = 'none';
                 zonaProfiloGiocatore.style.display = 'none'; 
                 titoloGiocoEl.style.display = 'none';
@@ -261,9 +290,7 @@
             }
         });
 
-        // -----------------------------------------------------------------
-        // 🃏 LOGICA DI GIOCO
-        // -----------------------------------------------------------------
+        // logica di gioco
         socket.on('nuovo-turno', (dati) => {
             if (countdownInterval) clearInterval(countdownInterval);
             
@@ -437,7 +464,7 @@
             }, 1000);
         });
         
-        // --- Logica della Chat ---
+        // logica della chat
         
         chatForm.addEventListener('submit', (e) => {
             e.preventDefault(); 
@@ -475,10 +502,81 @@
             
             chatMessaggiLista.appendChild(msgDiv);
             
-            // La chat è sempre aperta, quindi scrolliamo sempre in fondo
             chatMessaggiLista.scrollTop = chatMessaggiLista.scrollHeight; 
         });
 
+
+        // logica audio
+
+        musicaSfondo.volume = sliderVolumeMusica.value / 100;
+
+    function avviaMusicaAlPrimoClick() {
+        musicaSfondo.play().catch(e => {
+            console.warn("Avvio automatico musica bloccato.", e);
+        });
+        document.body.removeEventListener('click', avviaMusicaAlPrimoClick);
+    }
+    document.body.addEventListener('click', avviaMusicaAlPrimoClick, { once: true });
+
+    sliderVolumeMusica.addEventListener('input', () => {
+        const volumeVal = sliderVolumeMusica.value / 100;
+        musicaSfondo.volume = volumeVal;
+        if (volumeVal > 0) {
+            musicaSfondo.muted = false;
+        }
+        aggiornaIconaMusica();
+    });
+
+    iconaVolumeMusica.addEventListener('click', () => {
+        musicaSfondo.muted = !musicaSfondo.muted;
+        aggiornaIconaMusica();
+    });
+
+    function aggiornaIconaMusica() {
+        if (musicaSfondo.muted || musicaSfondo.volume === 0) {
+            iconaVolumeMusica.textContent = '🔇';
+            if (musicaSfondo.volume === 0) sliderVolumeMusica.value = 0;
+        } else {
+            iconaVolumeMusica.textContent = '🎵';
+            sliderVolumeMusica.value = musicaSfondo.volume * 100;
+        }
+    }
+
+    // gestione effetti sonori (SFX)
+
+    function playSfx(audioElement) {
+        if (sfxMuted || sfxVolume === 0) return; 
+        audioElement.volume = sfxVolume;
+        audioElement.currentTime = 0; 
+        audioElement.play().catch(e => console.warn("SFX play failed", e));
+    }
+
+    sliderVolumeSfx.addEventListener('input', () => {
+        sfxVolume = sliderVolumeSfx.value / 100;
+        if (sfxVolume > 0) {
+            sfxMuted = false;
+        }   
+        aggiornaIconaSfx();
+    });
+
+    // Icona Mute SFX
+    iconaVolumeSfx.addEventListener('click', () => {
+        sfxMuted = !sfxMuted;
+        aggiornaIconaSfx();
+    });
+
+    function aggiornaIconaSfx() {
+        if (sfxMuted || sfxVolume === 0) {
+            iconaVolumeSfx.textContent = '🔇';
+            if (sfxVolume === 0) sliderVolumeSfx.value = 0;
+        } else if (sfxVolume < 0.5) {
+            iconaVolumeSfx.textContent = '🔉';
+            sliderVolumeSfx.value = sfxVolume * 100;
+        } else {
+            iconaVolumeSfx.textContent = '🔊';
+            sliderVolumeSfx.value = sfxVolume * 100;
+        }
+    }
     </script>
 
 </body>
