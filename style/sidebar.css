@@ -1,8 +1,32 @@
+/* Stile per l'header della sidebar (titolo + conteggio) */
+#sidebar-lobby-info {
+    display: flex; 
+    justify-content: space-between; 
+    align-items: baseline; 
+    
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+    border-bottom: 2px solid var(--colore-elemento-sidebar);
+}
+#sidebar-lobby-info h3 {
+    margin: 0;
+    color: var(--colore-testo-sidebar);
+    font-size: 1.3em;
+}
+#sidebar-lobby-info #sidebar-lobby-conteggio {
+    font-size: 1em;
+    font-weight: bold;
+    color: var(--colore-testo-chiaro);
+}
+
+
 #zona-giocatori-sidebar {
     flex: 0 0 300px; 
     background-color: var(--colore-sfondo-sidebar);
     color: var(--colore-testo-sidebar); 
+    
     padding: 10px 20px 20px 20px; 
+    
     height: 100vh;
     box-shadow: 2px 0 5px var(--colore-ombra-sidebar);
     overflow-y: hidden; 
@@ -12,13 +36,13 @@
     flex-direction: column;
 }
 
-
 #lista-giocatori-container {
     flex-grow: 1; 
     overflow-y: auto; 
     margin-bottom: 15px; 
 }
 
+/* Stili per i riquadri dei giocatori */
 .giocatore-sidebar-item {
     background-color: var(--colore-elemento-sidebar);
     padding: 8px 10px; 

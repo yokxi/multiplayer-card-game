@@ -18,32 +18,32 @@
             
             <div class="menu-riga-principale">
                 <div class="menu-box" id="box-lobby-disponibili">
-                    <h3>Lobby Pubbliche</h3>
+                    <h3>Public Lobbies</h3>
                     <div id="lista-lobby-container">
-                        <p><i>(Funzionalità in arrivo...)</i></p>
+                        <p><i>(No lobbies available...)</i></p>
                     </div>
                 </div>
 
                 <div class="menu-box" id="box-unisciti-codice">
-                    <h3>Unisciti con Codice</h3>
-                    <p>Se hai un codice, inseriscilo qui per unirti ai tuoi amici.</p>
+                    <h3>Join with Code</h3>
+                    <p>If you have a code, enter it here to join your friends.</p>
                     <div class="input-gruppo">
                         <input type="text" id="input-codice-lobby" placeholder="ABCDE" maxlength="5">
-                        <button id="btn-unisciti-codice">VAI</button>
+                        <button id="btn-unisciti-codice">JOIN</button>
                     </div>
                 </div>
             </div>
 
             <div class="menu-riga-crea">
-                <button id="btn-mostra-crea-lobby">+ Crea Stanza</button>
+                <button id="btn-mostra-crea-lobby">+ Create Room</button>
 
                 <div class="menu-box" id="box-crea-lobby" style="display: none;">
-                    <h3>Crea una Stanza</h3>
+                    <h3>Create a Room</h3>
                     
-                    <label for="input-nome-stanza">Nome Stanza:</label>
-                    <input type="text" id="input-nome-stanza" placeholder="Es: 'Serata Epica'">
+                    <label for="input-nome-stanza">Room Name:</label>
+                    <input type="text" id="input-nome-stanza" placeholder="e.g., 'Epic Night'" maxlength="20">
                     
-                    <label for="input-max-giocatori">Max Giocatori:</label>
+                    <label for="input-max-giocatori">Max Players:</label>
                     <select id="input-max-giocatori">
                         <option value="4">4</option>
                         <option value="6">6</option>
@@ -51,16 +51,23 @@
                         <option value="10">10</option>
                     </select>
                     
-                    <button id="btn-crea-lobby">CREA</button>
+                    <button id="btn-crea-lobby">CREATE</button>
                 </div>
             </div>
 
-        </div> </div>
+        </div> 
+    </div>
     
     
     <div id="schermata-gioco" style="display: none;">
     
         <div id="zona-giocatori-sidebar">
+            
+            <div id="sidebar-lobby-info">
+                <h3>Players</h3>
+                <div id="sidebar-lobby-conteggio">0 / 0</div>
+            </div>
+
             <div id="lista-giocatori-container"></div>
             
             <div id="chat-container">
@@ -87,8 +94,8 @@
                 </div>
 
                 <div id="info-codice-lobby" style="display: none;">
-                    Codice: <b id="codice-lobby-display"></b>
-                    <span id="copia-codice-icon" title="Copia codice">📋</span>
+                    Code: <b id="codice-lobby-display"></b>
+                    <span id="copia-codice-icon" title="Copy code">📋</span>
                 </div>
             </div>
 
@@ -130,574 +137,10 @@
     <audio id="musica-sfondo" src="sound/background-music.mp3" loop></audio>
     <audio id="sfx-carta-girata" src="sound/card-flip.mp3" preload="auto"></audio>
     <audio id="sfx-vincitore" src="sound/win-round.mp3" preload="auto"></audio>
-
+    
     <script src="/socket.io/socket.io.js"></script>
-    <script>
-        const socket = io();
-
-        // --- Elementi Comuni ---
-        const statoConnessioneEl = document.getElementById('stato-connessione');
-        const areaMessaggi = document.getElementById('area-messaggi');
-        
-        // --- Elementi Menu Principale ---
-        const schermataMenuPrincipale = document.getElementById('schermata-menu-principale');
-        const inputCodiceLobby = document.getElementById('input-codice-lobby');
-        const btnUniscitiCodice = document.getElementById('btn-unisciti-codice');
-        const inputNomeStanza = document.getElementById('input-nome-stanza');
-        const inputMaxGiocatori = document.getElementById('input-max-giocatori');
-        const btnCreaLobby = document.getElementById('btn-crea-lobby');
-        const btnMostraCreaLobby = document.getElementById('btn-mostra-crea-lobby'); // <-- NUOVO
-        const boxCreaLobby = document.getElementById('box-crea-lobby'); // <-- NUOVO
-
-        // --- Elementi Schermata Gioco ---
-        const schermataGioco = document.getElementById('schermata-gioco');
-        const btnInizia = document.getElementById('btn-inizia');
-        const zonaMaster = document.getElementById('zona-master');
-        const zonaCartaNera = document.getElementById('zona-carta-nera');
-        const testoCartaNera = document.getElementById('testo-carta-nera');
-        const infoMaster = document.getElementById('info-master');
-        const zonaManoGiocatore = document.getElementById('zona-mano-giocatore');
-        const zonaCarteGiocate = document.getElementById('zona-carte-giocate'); 
-        const listaGiocatoriContainer = document.getElementById('lista-giocatori-container');
-        const zonaLobby = document.getElementById('zona-lobby');
-        const lobbyConteggio = document.getElementById('lobby-conteggio');
-        const lobbyAttesaHost = document.getElementById('lobby-attesa-host');
-        const btnAttivaScelta = document.getElementById('btn-attiva-scelta');
-        const infoCodiceLobby = document.getElementById('info-codice-lobby');
-        const codiceLobbyDisplay = document.getElementById('codice-lobby-display');
-        const copiaCodiceIcon = document.getElementById('copia-codice-icon');
-        
-        // --- Elementi Profilo (pre-partita) ---
-        const zonaProfiloGiocatore = document.getElementById('zona-profilo-giocatore');
-        const profiloNomeTesto = document.getElementById('profilo-nome-testo');
-        const profiloEditIcon = document.getElementById('profilo-edit-icon');
-        const profiloNomeInput = document.getElementById('profilo-nome-input');
-        
-        // --- Elementi Chat ---
-        const chatContainer = document.getElementById('chat-container');
-        const chatForm = document.getElementById('chat-form');
-        const chatInput = document.getElementById('chat-input');
-        const chatMessaggiLista = document.getElementById('chat-messaggi-lista');
-        
-
-        // --- Stato locale ---
-        let mioRuolo = { isMaster: false };
-        let listaGiocatoriLocale = []; 
-        let masterCorrenteID = null;
-        let countdownInterval = null;
-        
-
-        function getNomeGiocatore(id) {
-            const giocatore = listaGiocatoriLocale.find(g => g.id === id);
-            return giocatore ? giocatore.nome : "Player...";
-        }
-        
-        function attivaModificaNome() {
-            profiloNomeTesto.style.display = 'none';
-            profiloNomeInput.style.display = 'inline-block';
-            profiloNomeInput.value = profiloNomeTesto.textContent;
-            profiloNomeInput.focus();
-            profiloEditIcon.textContent = '✅';
-        }
-        
-        function salvaModificaNome() {
-            const nuovoNome = profiloNomeInput.value;
-            const nomeAttuale = profiloNomeTesto.textContent;
-            
-            if (nuovoNome && nuovoNome !== nomeAttuale) {
-                socket.emit('imposta-nome', nuovoNome);
-            }
-            
-            profiloNomeInput.style.display = 'none';
-            profiloNomeTesto.style.display = 'inline-block';
-            profiloEditIcon.textContent = '✏️';
-        }
-
-        // --- GESTIONE CONNESSIONE ---
-        socket.on('connect', () => {
-            statoConnessioneEl.style.display = 'none';
-        });
-        
-        socket.on('disconnect', () => {
-            statoConnessioneEl.style.display = 'block';
-            statoConnessioneEl.style.color = 'red';
-        });
-
-        // -----------------------------------------------------------------
-        // 🚪 LOGICA MENU E LOBBY (AGGIORNATA)
-        // -----------------------------------------------------------------
-
-        // Pulsante "+ Crea Stanza"
-        btnMostraCreaLobby.addEventListener('click', () => {
-            boxCreaLobby.style.display = 'block';
-            btnMostraCreaLobby.style.display = 'none';
-        });
-
-        // Pulsante "CREA" (dentro il form)
-        btnCreaLobby.addEventListener('click', () => {
-            const nomeStanza = inputNomeStanza.value || "Stanza senza nome";
-            const maxGiocatori = parseInt(inputMaxGiocatori.value, 10);
-            
-            socket.emit('crea-lobby', { 
-                nome: nomeStanza, 
-                maxGiocatori: maxGiocatori 
-            });
-        });
-
-        // Pulsante "VAI" (per unione con codice)
-        btnUniscitiCodice.addEventListener('click', () => {
-            const codice = inputCodiceLobby.value.trim().toUpperCase();
-            if (codice.length === 5) {
-                socket.emit('unisciti-con-codice', codice);
-            } else {
-                alert("Il codice deve essere di 5 caratteri.");
-            }
-        });
-        
-        socket.on('unito-alla-lobby', (datiLobby) => {
-            console.log("Unito alla lobby!", datiLobby);
-            
-            // 1. Cambia schermata
-            schermataMenuPrincipale.style.display = 'none';
-            schermataGioco.style.display = 'flex'; // Usiamo flex per far funzionare sidebar e main
-
-            // 2. Mostra il codice lobby
-            infoCodiceLobby.style.display = 'block';
-            codiceLobbyDisplay.textContent = datiLobby.codice;
-        });
-        
-        socket.on('errore-lobby', (messaggio) => {
-            alert(messaggio); // Mostra errori (es. "Lobby piena", "Codice non trovato")
-        });
-
-        copiaCodiceIcon.addEventListener('click', () => {
-            const codice = codiceLobbyDisplay.textContent;
-            navigator.clipboard.writeText(codice).then(() => {
-                alert(`Codice "${codice}" copiato!`);
-            }, () => {
-                alert('Impossibile copiare il codice.');
-            });
-        });
-
-
-        // -----------------------------------------------------------------
-        // 👤 GESTIONE PROFILO E PARTITA
-        // -----------------------------------------------------------------
-
-        btnInizia.addEventListener('click', () => {
-            socket.emit('inizia-partita');
-            btnInizia.style.display = 'none'; 
-        });
-
-        socket.on('errore', (messaggio) => {
-            areaMessaggi.innerHTML = `<p style="color: red;">${messaggio}</p>`;
-        });
-        
-        btnAttivaScelta.addEventListener('click', () => {
-            btnAttivaScelta.style.display = 'none';
-            zonaMaster.textContent = "Choose the winning card!";
-            const carteRivelate = zonaCarteGiocate.querySelectorAll('.carta-bianca');
-            carteRivelate.forEach(cartaDiv => {
-                cartaDiv.className = 'carta-scelta';
-                cartaDiv.onclick = () => {
-                    const testoScelto = cartaDiv.dataset.testo;
-                    socket.emit('scegli-vincitore', testoScelto); 
-                    zonaCarteGiocate.innerHTML = `<p style="font-size: 1.5em; color: green;">You chose! Announcing winner...</p>`;
-                };
-            });
-        });
-        
-        profiloEditIcon.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (profiloEditIcon.textContent === '✏️') {
-                attivaModificaNome();
-            } else {
-                salvaModificaNome();
-            }
-        });
-        
-        profiloNomeInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                salvaModificaNome();
-            }
-        });
-        profiloNomeInput.addEventListener('blur', () => {
-            if (profiloNomeInput.style.display !== 'none') {
-                salvaModificaNome();
-            }
-        });
-        
-        // --- GESTIONE LISTA GIOCATORI ---
-        socket.on('aggiorna-lista-giocatori', (data) => {
-            const { giocatori, hostID, partitaInCorso } = data;
-            listaGiocatoriLocale = giocatori; 
-            listaGiocatoriContainer.innerHTML = ''; 
-            
-            giocatori.forEach(g => {
-                const giocatoreDiv = document.createElement('div');
-                giocatoreDiv.className = 'giocatore-sidebar-item'; 
-                const nomeDiv = document.createElement('div');
-                nomeDiv.className = 'giocatore-nome';
-                let nomeTesto = g.nome;
-                if (g.id === hostID) {
-                    nomeTesto = `👑 ${nomeTesto}`;
-                }
-                nomeDiv.textContent = nomeTesto;
-                giocatoreDiv.appendChild(nomeDiv);
-                
-                const puntiDiv = document.createElement('div');
-                puntiDiv.className = 'giocatore-punti';
-                puntiDiv.textContent = `Points: ${g.punti}`;
-                giocatoreDiv.appendChild(puntiDiv);
-                
-                if (g.id === socket.id) {
-                    giocatoreDiv.classList.add('tu');
-                }
-                if (g.inAttesa) {
-                    giocatoreDiv.classList.add('in-attesa');
-                } else if (g.id === masterCorrenteID) {
-                    giocatoreDiv.classList.add('master-turno');
-                } else if (g.haGiocato) {
-                    giocatoreDiv.classList.add('ha-giocato');
-                }
-                listaGiocatoriContainer.appendChild(giocatoreDiv);
-            });
-            
-            const mioDato = giocatori.find(g => g.id === socket.id);
-
-            if (!partitaInCorso) {
-                zonaLobby.style.display = 'block';
-                
-                if (mioDato) {
-                    zonaProfiloGiocatore.style.display = 'block';
-                    profiloEditIcon.style.display = 'inline-block';
-                    
-                    if (profiloNomeInput.style.display === 'none') {
-                        profiloNomeTesto.textContent = mioDato.nome;
-                    }
-                }
-                
-                lobbyConteggio.textContent = `Players in lobby: ${giocatori.length}`;
-                if (socket.id === hostID) {
-                    btnInizia.style.display = 'block';
-                    lobbyAttesaHost.textContent = "You are the Host! You can start the game when ready.";
-                } else {
-                    btnInizia.style.display = 'none';
-                    const nomeHost = getNomeGiocatore(hostID);
-                    lobbyAttesaHost.textContent = `Waiting for ${nomeHost} to start the game.`;
-                }
-            } else {
-                // Se la partita è in corso...
-                zonaLobby.style.display = 'none';
-                zonaProfiloGiocatore.style.display = 'none'; 
-                btnInizia.style.display = 'none';
-                
-                if (mioDato && mioDato.inAttesa) {
-                    zonaLobby.style.display = 'block'; 
-                    lobbyConteggio.textContent = `Game in progress...`;
-                    lobbyAttesaHost.textContent = "Waiting for the next round to join the game.";
-                }
-            }
-        });
-
-        // -----------------------------------------------------------------
-        // 🃏 LOGICA DI GIOCO (Rimane quasi invariata sul client)
-        // -----------------------------------------------------------------
-        socket.on('nuovo-turno', (dati) => {
-            if (countdownInterval) clearInterval(countdownInterval);
-            
-            masterCorrenteID = dati.masterID;
-            
-            zonaLobby.style.display = 'none'; 
-            zonaProfiloGiocatore.style.display = 'none'; 
-            btnInizia.style.display = 'none';
-            areaMessaggi.innerHTML = '';
-            zonaManoGiocatore.innerHTML = ''; 
-            zonaCarteGiocate.innerHTML = '';
-            zonaCarteGiocate.style.display = 'none';
-            btnAttivaScelta.style.display = 'none'; 
-            
-            zonaCartaNera.style.display = 'block';
-            testoCartaNera.textContent = dati.cartaNera;
-            
-            if (dati.masterID === socket.id) {
-                infoMaster.textContent = "You are the Master!";
-            } else {
-                infoMaster.textContent = `This round's Master is: ${getNomeGiocatore(dati.masterID)}`;
-            }
-        });
-        
-        socket.on('aggiorna-stato-ruolo', (dati) => { 
-            mioRuolo.isMaster = dati.isMaster;
-            if (mioRuolo.isMaster) {
-                zonaMaster.textContent = "Waiting for players to choose...";
-                zonaMaster.style.display = 'block';
-                zonaManoGiocatore.style.display = 'none'; 
-            } else {
-                zonaMaster.textContent = "Choose your best card.";
-                zonaMaster.style.display = 'block';
-                zonaManoGiocatore.style.display = 'flex'; 
-            }
-        });
-        
-        socket.on('aggiorna-mano', (mano) => { 
-            zonaManoGiocatore.innerHTML = ''; 
-            if (mano.length === 0) {
-                zonaManoGiocatore.style.display = 'none';
-                return;
-            }
-            zonaManoGiocatore.style.display = 'flex';
-            mano.forEach(testoCarta => {
-                const cartaDiv = document.createElement('div');
-                cartaDiv.className = 'carta-bianca carta-giocabile'; 
-                cartaDiv.textContent = testoCarta;
-                cartaDiv.addEventListener('click', () => {
-                    if (!mioRuolo.isMaster && zonaManoGiocatore.style.display !== 'none') {
-                        socket.emit('gioca-carta', testoCarta);
-                        zonaManoGiocatore.innerHTML = '<p style="font-size: 1.2em; color: #555;">You played! Waiting for others...</p>';
-                        zonaManoGiocatore.style.display = 'block';
-                    }
-                });
-                zonaManoGiocatore.appendChild(cartaDiv);
-            });
-        });
-        
-        socket.on('inizia-fase-rivelazione', (data) => {
-            zonaManoGiocatore.innerHTML = '';
-            zonaManoGiocatore.style.display = 'none';
-            zonaCarteGiocate.innerHTML = '';
-            zonaCarteGiocate.style.display = 'flex';
-            
-            for (let i = 0; i < data.numCarte; i++) {
-                const cartaDiv = document.createElement('div');
-                cartaDiv.className = 'carta-coperta';
-                cartaDiv.dataset.index = i;
-                zonaCarteGiocate.appendChild(cartaDiv);
-            }
-            
-            if (!mioRuolo.isMaster) {
-                zonaMaster.textContent = "All players have played! The Master is revealing the cards...";
-                zonaMaster.style.display = 'block';
-            }
-        });
-
-        socket.on('sei-pronto-a-rivelare', () => {
-            zonaMaster.textContent = "Reveal the cards by clicking them!";
-            zonaMaster.style.display = 'block';
-            
-            const carteCoperte = zonaCarteGiocate.querySelectorAll('.carta-coperta');
-            carteCoperte.forEach(cartaDiv => {
-                cartaDiv.classList.add('cliccabile');
-                cartaDiv.onclick = () => {
-                    socket.emit('rivolgi-carta', { index: cartaDiv.dataset.index });
-                    cartaDiv.onclick = null;
-                    cartaDiv.classList.remove('cliccabile');
-                };
-            });
-        });
-
-        socket.on('carta-rivelata', (data) => {
-            playSfx(sfxCartaGirata); 
-            
-            const cartaDaRivelare = zonaCarteGiocate.querySelector(`.carta-coperta[data-index="${data.index}"]`);
-            
-            if (cartaDaRivelare) {
-                const cartaNuova = document.createElement('div');
-                cartaNuova.className = 'carta-bianca';
-                cartaNuova.dataset.index = data.index;
-                cartaNuova.dataset.testo = data.testoCarta;
-                cartaNuova.textContent = data.testoCarta;
-                
-                cartaDaRivelare.replaceWith(cartaNuova);
-            }
-        });
-
-        socket.on('attendi-scelta-finale', () => {
-            zonaMaster.textContent = "All cards revealed. Waiting for the Master's choice.";
-            zonaMaster.style.display = 'block';
-        });
-
-        socket.on('mostra-pulsante-scegli', () => {
-            zonaMaster.textContent = "All cards are revealed! Press the button to decide.";
-            zonaMaster.style.display = 'block';
-            btnAttivaScelta.style.display = 'block';
-        });
-        
-        socket.on('annuncia-vincitore', (dati) => {
-            masterCorrenteID = dati.vincitoreID;
-            
-            zonaManoGiocatore.innerHTML = '';
-            zonaManoGiocatore.style.display = 'none';
-            zonaCarteGiocate.innerHTML = '';
-            btnAttivaScelta.style.display = 'none';
-            zonaCarteGiocate.style.display = 'flex'; 
-            
-            zonaCartaNera.style.display = 'block';
-            testoCartaNera.textContent = dati.cartaNera;
-            
-            const cartaVincitriceDiv = document.createElement('div');
-            cartaVincitriceDiv.className = 'carta-bianca carta-vincitrice'; 
-            cartaVincitriceDiv.textContent = dati.cartaVincitrice;
-            zonaCarteGiocate.appendChild(cartaVincitriceDiv);
-            
-            let messaggio = '';
-            const nomeVincitore = getNomeGiocatore(dati.vincitoreID); 
-            if (dati.vincitoreID === socket.id) {
-                messaggio = "You won this round! You are the new Master.";
-                zonaMaster.style.borderColor = "var(--colore-master)";
-                zonaMaster.style.color = "var(--colore-giocatore-ha-giocato)";
-                playSfx(sfxVincitore);
-            } else {
-                messaggio = `Player ${nomeVincitore} won! They are the next Master.`; 
-                zonaMaster.style.borderColor = "var(--colore-master)";
-                zonaMaster.style.color = "var(--colore-testo-scuro)";
-            }
-            zonaMaster.textContent = messaggio;
-            zonaMaster.style.display = 'block';
-            
-            let timer = dati.countdown || 10;
-
-            if (countdownInterval) clearInterval(countdownInterval);
-
-            infoMaster.textContent = `Next round starts in ${timer}...`; 
-
-            countdownInterval = setInterval(() => {
-                timer--;
-                if (timer > 0) {
-                    infoMaster.textContent = `Next round starts in ${timer}...`;
-                } else {
-                    infoMaster.textContent = "Starting next round..."; 
-                    clearInterval(countdownInterval);
-                }
-            }, 1000);
-        });
-        
-        // -----------------------------------------------------------------
-        // 💬 Logica della Chat
-        // -----------------------------------------------------------------
-        
-        chatForm.addEventListener('submit', (e) => {
-            e.preventDefault(); 
-            const messaggio = chatInput.value;
-            
-            if (messaggio.trim() !== '') {
-                socket.emit('invia-messaggio-chat', messaggio);
-                chatInput.value = '';
-            }
-        });
-        
-        socket.on('nuovo-messaggio-chat', (data) => {
-            const msgDiv = document.createElement('div');
-            msgDiv.className = 'messaggio-chat';
-            
-            if (data.isSystem) {
-                msgDiv.classList.add('sistema');
-                msgDiv.textContent = data.messaggio;
-            } else {
-                const nomeSpan = document.createElement('span');
-                nomeSpan.className = 'nome';
-                nomeSpan.textContent = `${data.nome}: `;
-                
-                if (data.id === socket.id) {
-                    msgDiv.classList.add('tu');
-                }
-                
-                const testoSpan = document.createElement('span');
-                testoSpan.className = 'testo';
-                testoSpan.textContent = data.messaggio;
-                
-                msgDiv.appendChild(nomeSpan);
-                msgDiv.appendChild(testoSpan);
-            }
-            
-            chatMessaggiLista.appendChild(msgDiv);
-            chatMessaggiLista.scrollTop = chatMessaggiLista.scrollHeight; 
-        });
-
-
-        // -----------------------------------------------------------------
-        // 🔊 LOGICA AUDIO (Invariata)
-        // -----------------------------------------------------------------
-        
-        const musicaSfondo = document.getElementById('musica-sfondo');
-        const iconaVolumeMusica = document.getElementById('icona-volume-musica');
-        const sliderVolumeMusica = document.getElementById('slider-volume-musica');
-        const iconaVolumeSfx = document.getElementById('icona-volume-sfx');
-        const sliderVolumeSfx = document.getElementById('slider-volume-sfx');
-        const sfxCartaGirata = document.getElementById('sfx-carta-girata');
-        const sfxVincitore = document.getElementById('sfx-vincitore');
-        
-        let sfxVolume = sliderVolumeSfx.value / 100;
-        let sfxMuted = false;
-
-        musicaSfondo.volume = sliderVolumeMusica.value / 100;
-        
-        function avviaMusicaAlPrimoClick() {
-            musicaSfondo.play().catch(e => {
-                console.warn("Avvio automatico musica bloccato.", e);
-            });
-            document.body.removeEventListener('click', avviaMusicaAlPrimoClick);
-        }
-        document.body.addEventListener('click', avviaMusicaAlPrimoClick, { once: true });
-
-        sliderVolumeMusica.addEventListener('input', () => {
-            const volumeVal = sliderVolumeMusica.value / 100;
-            musicaSfondo.volume = volumeVal;
-            if (volumeVal > 0) {
-                musicaSfondo.muted = false;
-            }
-            aggiornaIconaMusica();
-        });
-
-        iconaVolumeMusica.addEventListener('click', () => {
-            musicaSfondo.muted = !musicaSfondo.muted;
-            aggiornaIconaMusica();
-        });
-
-        function aggiornaIconaMusica() {
-            if (musicaSfondo.muted || musicaSfondo.volume === 0) {
-                iconaVolumeMusica.textContent = '🔇';
-                if (musicaSfondo.volume === 0) sliderVolumeMusica.value = 0;
-            } else {
-                iconaVolumeMusica.textContent = '🎵';
-                sliderVolumeMusica.value = musicaSfondo.volume * 100;
-            }
-        }
-
-        function playSfx(audioElement) {
-            if (sfxMuted || sfxVolume === 0) return;
-            audioElement.volume = sfxVolume;
-            audioElement.currentTime = 0;
-            audioElement.play().catch(e => console.warn("SFX play failed", e));
-        }
-
-        sliderVolumeSfx.addEventListener('input', () => {
-            sfxVolume = sliderVolumeSfx.value / 100;
-            if (sfxVolume > 0) {
-                sfxMuted = false;
-            }
-            aggiornaIconaSfx();
-        });
-
-        iconaVolumeSfx.addEventListener('click', () => {
-            sfxMuted = !sfxMuted;
-            aggiornaIconaSfx();
-        });
-
-        function aggiornaIconaSfx() {
-            if (sfxMuted || sfxVolume === 0) {
-                iconaVolumeSfx.textContent = '🔇';
-                if (sfxVolume === 0) sliderVolumeSfx.value = 0;
-            } else if (sfxVolume < 0.5) {
-                iconaVolumeSfx.textContent = '🔉';
-                sliderVolumeSfx.value = sfxVolume * 100;
-            } else {
-                iconaVolumeSfx.textContent = '🔊';
-                sliderVolumeSfx.value = sfxVolume * 100;
-            }
-        }
-
-    </script>
-
-</body>
+    
+    <script src="client/client.js" type="module"></script>
+    
+    </body>
 </html>

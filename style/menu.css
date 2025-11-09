@@ -4,7 +4,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start; /* Allinea in alto */
+    justify-content: flex-start;
     padding-top: 40px;
     box-sizing: border-box;
     overflow-y: auto;
@@ -24,27 +24,25 @@
     text-transform: uppercase;
 }
 
-/* ▼▼▼ Container Principale Menu (MODIFICATO) ▼▼▼ */
 .menu-container {
     display: flex;
-    flex-direction: column; /* Righe una sotto l'altra */
-    align-items: center; /* Centra le righe */
+    flex-direction: column; 
+    align-items: center; 
     gap: 30px;
-    max-width: 900px; /* Abbastanza largo per 2 box */
+    max-width: 900px; 
     width: 100%;
 }
 
-/* ▼▼▼ Box Menu (MODIFICATO) ▼▼▼ */
 .menu-box {
     background-color: var(--colore-sfondo-box);
     border-radius: 8px;
     padding: 25px;
-    width: 400px; /* Larghezza base box */
+    width: 400px; 
     box-shadow: 0 4px 10px var(--colore-ombra-leggera);
     border: 2px solid var(--colore-elemento-sidebar);
     box-sizing: border-box;
-    flex-grow: 1; /* Permette ai box di crescere */
-    max-width: 430px; /* Limite massimo */
+    flex-grow: 1; 
+    max-width: 430px; 
 }
 .menu-box h3 {
     margin-top: 0;
@@ -60,10 +58,9 @@
     min-height: 40px;
 }
 
-/* ▼▼▼ Righe Menu (NUOVE) ▼▼▼ */
 .menu-riga-principale {
     display: flex;
-    flex-wrap: wrap; /* Su schermi piccoli va a capo */
+    flex-wrap: wrap; 
     justify-content: center;
     gap: 30px;
     width: 100%;
@@ -75,7 +72,6 @@
     width: 100%;
 }
 
-/* Pulsante "+ Crea Stanza" (NUOVO) */
 #btn-mostra-crea-lobby {
     font-size: 1.5em;
     padding: 20px 40px;
@@ -92,15 +88,13 @@
     border-color: var(--colore-testo-sidebar);
 }
 
-/* Box creazione (ora centrato) */
 #box-crea-lobby {
     width: 400px;
     max-width: 100%;
-    flex-grow: 0; /* Non deve crescere */
+    flex-grow: 0; 
 }
 
-
-/* Stili per form e bottoni (invariati) */
+/* Stili form */
 .menu-box label {
     display: block;
     font-weight: bold;
@@ -133,7 +127,7 @@
     background-color: var(--colore-btn-start-hover);
 }
 
-/* Stile per unione con codice (invariato) */
+/* Stile join con codice */
 .input-gruppo {
     display: flex;
     gap: 10px;
@@ -153,7 +147,7 @@
     margin-top: 0;
 }
 
-/* ▼▼▼ Stile Codice Lobby (MODIFICATO per nuova posizione) ▼▼▼ */
+/* Stile codice lobby (in game) */
 #info-codice-lobby {
     background: var(--colore-sfondo-messaggio);
     border: 1px solid var(--colore-master);
@@ -161,9 +155,9 @@
     border-radius: 8px;
     font-size: 0.9em;
     text-align: center;
-    margin-top: 5px; /* Spazio dai suoni */
+    margin-top: 5px; 
     color: var(--colore-testo-scuro);
-    width: 100%; /* Occupa larghezza del box controlli */
+    width: 100%; 
     box-sizing: border-box;
 }
 #codice-lobby-display {
@@ -176,3 +170,57 @@
     opacity: 0.7;
 }
 #copia-codice-icon:hover { opacity: 1; }
+
+
+/* ▼▼▼ QUESTO È IL BLOCCO CHE CREA IL LAYOUT CORRETTO ▼▼▼ */
+#lista-lobby-container {
+    width: 100%;
+    max-height: 250px; 
+    overflow-y: auto;
+    border-top: 1px solid var(--colore-testo-chiaro);
+    margin-top: 15px;
+    padding-top: 10px;
+}
+#lista-lobby-container p { 
+    min-height: 0;
+    text-align: center;
+    color: var(--colore-testo-intermedio);
+}
+
+.lobby-item {
+    display: flex; /* <-- USA FLEXBOX PER ALLINEARE */
+    align-items: center; /* Allinea verticalmente */
+    justify-content: space-between; /* Spinge il nome a sx e il bottone a dx */
+    padding: 10px;
+    border-bottom: 1px solid var(--colore-elemento-sidebar);
+}
+.lobby-item:last-child {
+    border-bottom: none;
+}
+
+.lobby-item-info {
+    font-size: 1.1em;
+    color: var(--colore-testo-scuro); /* <-- Assicura che il testo sia scuro */
+    
+    flex-grow: 1; /* Occupa tutto lo spazio possibile */
+    white-space: nowrap; /* Non manda il testo a capo */
+    overflow: hidden; /* Nasconde il testo che sborda */
+    text-overflow: ellipsis; /* Aggiunge "..." se il nome è lungo */
+    margin-right: 10px; /* Spazio prima del bottone */
+}
+.lobby-item-info strong {
+    color: var(--colore-testo-profilo); /* <-- Assicura che il nome sia blu */
+}
+
+.lobby-item-join-btn {
+    font-size: 0.9em; /* Bottone piccolo */
+    padding: 8px 12px;
+    margin-top: 0; 
+    width: auto; /* Larghezza automatica */
+    background-color: var(--colore-giocatore-ha-giocato);
+    flex-shrink: 0; /* Impedisce al bottone di rimpicciolirsi */
+}
+.lobby-item-join-btn:hover {
+    background-color: #38A169;
+}
+/* ▲▲▲ FINE BLOCCO CSS ▲▲▲ */

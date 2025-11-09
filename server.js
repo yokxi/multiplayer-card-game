@@ -11,21 +11,20 @@ app.use('/style', express.static(__dirname + '/style'));
 app.use('/img', express.static(__dirname + '/img')); 
 app.use('/sound', express.static(__dirname + '/sound'));
 
-// --- Caricamento Mazzi (globale, non cambia) ---
+// --- Deck Loading ---
 const carteNereBase = require('./decks/black_cards.json');
 const carteBiancheBase = require('./decks/white_cards.json');
 
-// --- GESTORE STANZE (NUOVO) ---
-// Tutta la logica del gioco ora vive qui dentro.
-// La chiave è il 'codiceLobby', il valore è l'oggetto 'stanza'.
-let stanze = new Map();
+// --- ROOM MANAGER ---
+let stanze = new Map(); // 'stanze' (rooms) stores the full game state
+let lobbyPubbliche = new Map(); // 'lobbyPubbliche' stores data for the menu
 
-// --- Costanti di Gioco ---
+// --- Game Constants ---
 const MAX_CARTE_MANO = 7;
 const PUNTEGGIO_PER_VINCERE = 5;
 
 // ==================================================================
-// FUNZIONI HELPER (Molte ora richiedono la 'stanza' come parametro)
+// HELPER FUNCTIONS
 // ==================================================================
 
 function shuffle(array) {
@@ -36,16 +35,15 @@ function shuffle(array) {
     return array;
 }
 
-// Genera un codice lobby unico di 5 caratteri
 function generaCodiceLobby() {
     let codice = '';
-    const chars = 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789'; // Esclusa la O per evitare confusione con 0
+    const chars = 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789';
     do {
         codice = '';
         for (let i = 0; i < 5; i++) {
             codice += chars.charAt(Math.floor(Math.random() * chars.length));
         }
-    } while (stanze.has(codice)); // Continua a generare finché non è unico
+    } while (stanze.has(codice)); 
     return codice;
 }
 
@@ -54,7 +52,10 @@ function getGiocatore(stanza, id) {
     return stanza.giocatori.find(g => g.id === id);
 }
 
-// Invia un messaggio di sistema SOLO a una stanza
+function broadcastListaLobby() {
+    io.emit('aggiorna-lobby-pubbliche', Array.from(lobbyPubbliche.values()));
+}
+
 function inviaMessaggioChatSistema(codice, messaggio) {
     io.to(codice).emit('nuovo-messaggio-chat', {
         nome: "System",
@@ -63,10 +64,15 @@ function inviaMessaggioChatSistema(codice, messaggio) {
     });
 }
 
-// Aggiorna lo stato della lobby SOLO per i giocatori in quella stanza
 function aggiornaStatoLobby(codice) {
     const stanza = stanze.get(codice);
-    if (!stanza) return; // Se la stanza non esiste (es. è stata chiusa), non fare nulla
+    if (!stanza) return;
+
+    const lobbyPub = lobbyPubbliche.get(codice);
+    if (lobbyPub) {
+        lobbyPub.numGiocatori = stanza.giocatori.length;
+        broadcastListaLobby();
+    }
 
     io.to(codice).emit('aggiorna-lista-giocatori', {
         giocatori: stanza.giocatori.map(g => ({
@@ -77,24 +83,26 @@ function aggiornaStatoLobby(codice) {
             haGiocato: g.haGiocato
         })),
         hostID: stanza.hostID,
-        partitaInCorso: stanza.partitaInCorso
+        partitaInCorso: stanza.partitaInCorso,
+        maxGiocatori: stanza.maxGiocatori, 
+        numGiocatori: stanza.giocatori.length 
     });
 }
 
 // ==================================================================
-// LOGICA DI GIOCO (Ora tutto per-stanza)
+// GAME LOGIC (Per-Room)
 // ==================================================================
 
 function pescaCartaNera(stanza) {
     if (stanza.mazzoCarteNere.length === 0) {
-        stanza.mazzoCarteNere = shuffle([...carteNereBase]); // Ricarica
+        stanza.mazzoCarteNere = shuffle([...carteNereBase]); 
     }
     return stanza.mazzoCarteNere.pop();
 }
 
 function pescaCartaBianca(stanza, numero = 1) {
     if (stanza.mazzoCarteBianche.length < numero) {
-        stanza.mazzoCarteBianche = shuffle([...carteBiancheBase]); // Ricarica
+        stanza.mazzoCarteBianche = shuffle([...carteBiancheBase]); 
     }
     const pescate = [];
     for (let i = 0; i < numero; i++) {
@@ -115,7 +123,6 @@ function distribuisciCarteIniziali(stanza) {
 function iniziaNuovoTurno(codice) {
     const stanza = stanze.get(codice);
     if (!stanza || stanza.giocatori.length < 2) {
-        // Se la stanza non esiste o ci sono meno di 2 giocatori, termina la partita
         if (stanza) terminaPartita(codice, "Not enough players to continue.");
         return;
     }
@@ -123,7 +130,6 @@ function iniziaNuovoTurno(codice) {
     stanza.roundAttuale++;
     stanza.carteBiancheGiocate = [];
     
-    // Assegna il prossimo Master
     const masterIndex = (stanza.giocatori.findIndex(g => g.id === stanza.masterCorrenteID) + 1) % stanza.giocatori.length;
     stanza.masterCorrenteID = stanza.giocatori[masterIndex].id;
 
@@ -141,11 +147,10 @@ function iniziaNuovoTurno(codice) {
                 g.mano.push(...pescaCartaBianca(stanza, carteDaPescare));
             }
         } else {
-            g.mano = []; // Master non ha carte bianche
+            g.mano = []; 
         }
     });
 
-    // Emetti SOLO alla stanza
     io.to(codice).emit('nuovo-turno', {
         cartaNera: stanza.carteNeraCorrente,
         masterID: stanza.masterCorrenteID,
@@ -156,7 +161,7 @@ function iniziaNuovoTurno(codice) {
         io.to(g.id).emit('aggiorna-mano', g.mano);
         io.to(g.id).emit('aggiorna-stato-ruolo', { isMaster: g.id === stanza.masterCorrenteID });
     });
-    aggiornaStatoLobby(codice); // Aggiorna lo stato dei giocatori
+    aggiornaStatoLobby(codice); 
 }
 
 function terminaPartita(codice, messaggio = "The game has ended. Returning to lobby.") {
@@ -178,21 +183,23 @@ function terminaPartita(codice, messaggio = "The game has ended. Returning to lo
 
 
 // ==================================================================
-// GESTIONE CONNESSIONI (Molto diverso ora)
+// CONNECTION HANDLING
 // ==================================================================
 
 io.on('connection', (socket) => {
     console.log(`User ${socket.id} connected`);
     
-    // Non facciamo nulla qui. L'utente è nel "menu".
-    // Aspettiamo che crei o si unisca a una lobby.
+    socket.emit('aggiorna-lobby-pubbliche', Array.from(lobbyPubbliche.values()));
 
-    // --- NUOVA LOGICA LOBBY ---
+    // --- LOBBY LOGIC ---
 
     socket.on('crea-lobby', (dati) => {
         const codice = generaCodiceLobby();
         
-        // Crea il giocatore (che è l'host)
+        // ▼▼▼ MODIFICA QUI ▼▼▼
+        const nomeStanza = dati.nome.substring(0, 20); // Limita a 20 caratteri
+        // ▲▲▲ FINE MODIFICA ▲▲▲
+
         const host = {
             id: socket.id,
             nome: `Player1`,
@@ -202,15 +209,13 @@ io.on('connection', (socket) => {
             inAttesa: false
         };
 
-        // Crea la nuova stanza
         const nuovaStanza = {
             codice: codice,
-            nome: dati.nome,
+            nome: nomeStanza, // Usa il nome limitato
             maxGiocatori: dati.maxGiocatori,
             hostID: socket.id,
             giocatori: [host],
             partitaInCorso: false,
-            // Stato di gioco per questa stanza
             mazzoCarteNere: shuffle([...carteNereBase]),
             mazzoCarteBianche: shuffle([...carteBiancheBase]),
             carteNeraCorrente: '',
@@ -219,67 +224,62 @@ io.on('connection', (socket) => {
             roundAttuale: 0
         };
 
-        // Salva la stanza
         stanze.set(codice, nuovaStanza);
 
-        // Aggiungi il socket alla "room" di Socket.IO per il broadcast
+        lobbyPubbliche.set(codice, {
+            codice: codice,
+            nome: nomeStanza, // Usa il nome limitato
+            numGiocatori: 1,
+            maxGiocatori: dati.maxGiocatori
+        });
+        
         socket.join(codice);
-        // Salva il codice della stanza sul socket per trovarlo al disconnect
         socket.stanzaCorrente = codice;
 
-        // Invia al client il suo nome e che si è unito
         socket.emit('imposta-nome-default', host.nome);
-        socket.emit('unito-alla-lobby', { codice: codice });
+        socket.emit('unito-alla-lobby', { codice: codice, nome: nomeStanza });
         
-        // Aggiorna la lobby per il creatore
-        aggiornaStatoLobby(codice);
+        aggiornaStatoLobby(codice); 
         console.log(`User ${socket.id} created lobby ${codice}`);
     });
 
     socket.on('unisciti-con-codice', (codice) => {
         const stanza = stanze.get(codice);
 
-        // Controlli
         if (!stanza) {
-            socket.emit('errore-lobby', 'Codice non trovato. Controlla e riprova.');
+            socket.emit('errore-lobby', 'Code not found. Please check and try again.');
             return;
         }
         if (stanza.giocatori.length >= stanza.maxGiocatori) {
-            socket.emit('errore-lobby', 'Questa lobby è piena.');
+            socket.emit('errore-lobby', 'This lobby is full.');
             return;
         }
 
-        // Crea il nuovo giocatore
         const nuovoGiocatore = {
             id: socket.id,
             nome: `Player${stanza.giocatori.length + 1}`,
             punti: 0,
             mano: [],
             haGiocato: false,
-            inAttesa: stanza.partitaInCorso // Se la partita è in corso, entra in attesa
+            inAttesa: stanza.partitaInCorso 
         };
         
-        // Aggiungi il giocatore alla stanza
         stanza.giocatori.push(nuovoGiocatore);
         
-        // Aggiungi il socket alla room
         socket.join(codice);
         socket.stanzaCorrente = codice;
         
-        // Invia al client il suo nome e che si è unito
         socket.emit('imposta-nome-default', nuovoGiocatore.nome);
-        socket.emit('unito-alla-lobby', { codice: codice });
+        socket.emit('unito-alla-lobby', { codice: codice, nome: stanza.nome });
         
         inviaMessaggioChatSistema(codice, `${nuovoGiocatore.nome} has joined the lobby!`);
         
-        // Aggiorna la lobby per tutti
-        aggiornaStatoLobby(codice);
+        aggiornaStatoLobby(codice); 
         console.log(`User ${socket.id} joined lobby ${codice}`);
     });
 
 
-    // --- LOGICA DI GIOCO (Ora "room-aware") ---
-    // Tutti gli eventi ora devono prima trovare la stanza
+    // --- GAME LOGIC (Room-aware) ---
 
     socket.on('imposta-nome', (nuovoNome) => {
         const codice = socket.stanzaCorrente;
@@ -290,7 +290,7 @@ io.on('connection', (socket) => {
         const giocatore = getGiocatore(stanza, socket.id);
         if (giocatore) {
             const oldName = giocatore.nome;
-            giocatore.nome = nuovoNome.substring(0, 20); // Limita lunghezza
+            giocatore.nome = nuovoNome.substring(0, 20);
             inviaMessaggioChatSistema(codice, `${oldName} changed their name to ${giocatore.nome}.`);
             aggiornaStatoLobby(codice);
         }
@@ -353,7 +353,6 @@ io.on('connection', (socket) => {
 
         if (socket.id === stanza.masterCorrenteID && stanza.partitaInCorso) {
             const index = parseInt(data.index);
-            // Ordiniamo le carte in base all'ordine random e prendiamo quella all'indice cliccato
             const carteOrdinate = stanza.carteBiancheGiocate.sort((a,b) => a.ordine - b.ordine);
             const cartaDaRivelare = carteOrdinate[index];
 
@@ -361,7 +360,7 @@ io.on('connection', (socket) => {
                 cartaDaRivelare.rivelata = true;
                 
                 io.to(codice).emit('carta-rivelata', {
-                    index: index, // Invia l'indice della carta nel suo ordine
+                    index: index,
                     testoCarta: cartaDaRivelare.carta
                 });
 
@@ -414,7 +413,7 @@ io.on('connection', (socket) => {
         const giocatore = getGiocatore(stanza, socket.id);
         if (giocatore) {
             io.to(codice).emit('nuovo-messaggio-chat', {
-                id: socket.id, // Invia l'ID per il confronto 'tu'
+                id: socket.id, 
                 nome: giocatore.nome,
                 messaggio: messaggio,
                 isSystem: false
@@ -427,44 +426,42 @@ io.on('connection', (socket) => {
         const codice = socket.stanzaCorrente;
         if (!codice) {
             console.log("User was not in a lobby.");
-            return; // L'utente non era in nessuna stanza
+            return; 
         }
 
         const stanza = stanze.get(codice);
         if (!stanza) {
-            console.log(`Lobby ${codice} not found for disconnected user.`);
-            return; // La stanza non esiste più
+            console.log(`Lobby ${codice} not found.`);
+            return;
         }
 
         const giocatoreDisconnesso = getGiocatore(stanza, socket.id);
         const nomeDisconnesso = giocatoreDisconnesso ? giocatoreDisconnesso.nome : "A player";
 
-        // Rimuovi il giocatore dalla lista
         stanza.giocatori = stanza.giocatori.filter(g => g.id !== socket.id);
 
         if (stanza.giocatori.length === 0) {
-            // Se la stanza è vuota, eliminala
             stanze.delete(codice);
+            lobbyPubbliche.delete(codice); 
+            broadcastListaLobby(); 
             console.log(`Lobby ${codice} is empty and has been deleted.`);
             return;
         }
-
-        // Se l'host si disconnette, assegna un nuovo host
+        
+        // ▼▼▼ LOGICA ASSEGNAZIONE NUOVO HOST (già presente) ▼▼▼
         if (socket.id === stanza.hostID) {
-            stanza.hostID = stanza.giocatori[0].id; // Assegna al primo giocatore rimasto
+            stanza.hostID = stanza.giocatori[0].id; 
             inviaMessaggioChatSistema(codice, `${nomeDisconnesso} (Host) disconnected. ${stanza.giocatori[0].nome} is now the host.`);
         } else {
             inviaMessaggioChatSistema(codice, `${nomeDisconnesso} has left the lobby.`);
         }
+        // ▲▲▲ FINE LOGICA HOST ▲▲▲
 
-        // Se la partita è in corso
         if (stanza.partitaInCorso) {
-            // Se il Master si disconnette, termina la partita
             if (socket.id === stanza.masterCorrenteID) {
                 inviaMessaggioChatSistema(codice, `The Master (${nomeDisconnesso}) disconnected. The game is stopping.`);
                 terminaPartita(codice);
             }
-            // Se un giocatore (non master) si disconnette, controlla se era l'ultimo a dover giocare
             else {
                 const nonMasterPlayers = stanza.giocatori.filter(g => g.id !== stanza.masterCorrenteID && !g.inAttesa);
                 const tuttiHannoGiocato = nonMasterPlayers.every(g => g.haGiocato);
@@ -476,8 +473,7 @@ io.on('connection', (socket) => {
                 }
             }
         }
-
-        // Infine, aggiorna la lobby per tutti quelli rimasti
+        
         aggiornaStatoLobby(codice);
     });
 });
