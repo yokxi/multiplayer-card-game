@@ -2,9 +2,20 @@ html, body {
     margin: 0; padding: 0; height: 100%;
     font-family: Arial, sans-serif;
     background-color: var(--colore-sfondo-pagina);
-    overflow: hidden;
+    overflow: hidden; /* Per evitare scrollbar */
 }
-body { display: flex; flex-direction: row; }
+/* body { display: flex; flex-direction: row; } <-- RIMOSSO DA QUI */
+
+/* ▼▼▼ AGGIUNTO QUESTO BLOCCO ▼▼▼ */
+/* Questo wrapper ora controlla il layout del gioco (sidebar + main) */
+#schermata-gioco {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100vh;
+}
+/* ▲▲▲ FINE BLOCCO AGGIUNTO ▲▲▲ */
+
 
 #contenitore-principale {
     flex: 1; height: 100vh;
@@ -14,10 +25,12 @@ body { display: flex; flex-direction: row; }
     transition: padding-right 0.3s ease-out; 
 }
 
+/* Classe per "spingere" il contenuto (invariata) */
 #contenitore-principale.chat-attiva {
     padding-right: 330px; 
 }
 
+/* ▼▼▼ Stili Audio (invariati) ▼▼▼ */
 #controlli-audio {
     position: absolute;
     top: 20px;
@@ -53,7 +66,6 @@ body { display: flex; flex-direction: row; }
 .slider-volume {
     width: 100px;
     cursor: pointer;
-    /* Stile per Chrome/Safari */
     -webkit-appearance: none;
     appearance: none;
     height: 8px;
@@ -70,7 +82,6 @@ body { display: flex; flex-direction: row; }
     border-radius: 50%;
     cursor: pointer;
 }
-/* Stile per Firefox */
 .slider-volume::-moz-range-thumb {
     width: 16px;
     height: 16px;

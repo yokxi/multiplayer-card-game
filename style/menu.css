@@ -1,0 +1,178 @@
+#schermata-menu-principale {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start; /* Allinea in alto */
+    padding-top: 40px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    background-color: var(--colore-sfondo-pagina);
+}
+
+#schermata-menu-principale #titolo-gioco {
+    font-family: 'Impact', 'Arial Black', sans-serif;
+    font-size: 6em;
+    color: var(--colore-testo-titolo);
+    text-shadow: 4px 4px 6px var(--colore-ombra-titolo-scura), 
+                 -4px -4px 6px var(--colore-ombra-titolo-chiara);
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 40px;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+}
+
+/* ▼▼▼ Container Principale Menu (MODIFICATO) ▼▼▼ */
+.menu-container {
+    display: flex;
+    flex-direction: column; /* Righe una sotto l'altra */
+    align-items: center; /* Centra le righe */
+    gap: 30px;
+    max-width: 900px; /* Abbastanza largo per 2 box */
+    width: 100%;
+}
+
+/* ▼▼▼ Box Menu (MODIFICATO) ▼▼▼ */
+.menu-box {
+    background-color: var(--colore-sfondo-box);
+    border-radius: 8px;
+    padding: 25px;
+    width: 400px; /* Larghezza base box */
+    box-shadow: 0 4px 10px var(--colore-ombra-leggera);
+    border: 2px solid var(--colore-elemento-sidebar);
+    box-sizing: border-box;
+    flex-grow: 1; /* Permette ai box di crescere */
+    max-width: 430px; /* Limite massimo */
+}
+.menu-box h3 {
+    margin-top: 0;
+    text-align: center;
+    font-size: 1.5em;
+    color: var(--colore-giocatore-tu);
+    border-bottom: 2px solid var(--colore-elemento-sidebar);
+    padding-bottom: 10px;
+}
+.menu-box p {
+    font-size: 0.95em;
+    color: var(--colore-testo-intermedio);
+    min-height: 40px;
+}
+
+/* ▼▼▼ Righe Menu (NUOVE) ▼▼▼ */
+.menu-riga-principale {
+    display: flex;
+    flex-wrap: wrap; /* Su schermi piccoli va a capo */
+    justify-content: center;
+    gap: 30px;
+    width: 100%;
+}
+
+.menu-riga-crea {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+/* Pulsante "+ Crea Stanza" (NUOVO) */
+#btn-mostra-crea-lobby {
+    font-size: 1.5em;
+    padding: 20px 40px;
+    cursor: pointer;
+    background-color: var(--colore-sfondo-sidebar);
+    color: var(--colore-testo-sidebar);
+    border: 2px dashed var(--colore-testo-chiaro);
+    border-radius: 8px;
+    font-weight: bold;
+    transition: all 0.2s ease;
+}
+#btn-mostra-crea-lobby:hover {
+    background-color: var(--colore-elemento-sidebar);
+    border-color: var(--colore-testo-sidebar);
+}
+
+/* Box creazione (ora centrato) */
+#box-crea-lobby {
+    width: 400px;
+    max-width: 100%;
+    flex-grow: 0; /* Non deve crescere */
+}
+
+
+/* Stili per form e bottoni (invariati) */
+.menu-box label {
+    display: block;
+    font-weight: bold;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    color: var(--colore-testo-intermedio);
+}
+.menu-box input[type="text"],
+.menu-box select {
+    width: 100%;
+    padding: 10px;
+    font-size: 1.1em;
+    border-radius: 5px;
+    border: 2px solid var(--colore-testo-chiaro);
+    box-sizing: border-box;
+}
+.menu-box button {
+    width: 100%;
+    font-size: 1.2em;
+    padding: 12px;
+    margin-top: 20px;
+    cursor: pointer;
+    background-color: var(--colore-btn-start-bg);
+    color: var(--colore-btn-start-testo); 
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+}
+.menu-box button:hover {
+    background-color: var(--colore-btn-start-hover);
+}
+
+/* Stile per unione con codice (invariato) */
+.input-gruppo {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+.input-gruppo input {
+    flex-grow: 1; 
+    text-align: center;
+    font-size: 1.5em !important;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+}
+.input-gruppo button {
+    width: auto;
+    flex-basis: 80px; 
+    font-size: 1.1em;
+    margin-top: 0;
+}
+
+/* ▼▼▼ Stile Codice Lobby (MODIFICATO per nuova posizione) ▼▼▼ */
+#info-codice-lobby {
+    background: var(--colore-sfondo-messaggio);
+    border: 1px solid var(--colore-master);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.9em;
+    text-align: center;
+    margin-top: 5px; /* Spazio dai suoni */
+    color: var(--colore-testo-scuro);
+    width: 100%; /* Occupa larghezza del box controlli */
+    box-sizing: border-box;
+}
+#codice-lobby-display {
+    font-size: 1.1em;
+    color: var(--colore-giocatore-tu);
+    margin: 0 3px;
+}
+#copia-codice-icon {
+    cursor: pointer;
+    opacity: 0.7;
+}
+#copia-codice-icon:hover { opacity: 1; }

@@ -10,68 +10,122 @@
 </head>
 <body>
 
-    <div id="zona-giocatori-sidebar">
-        <div id="lista-giocatori-container"></div>
-        
-        <div id="chat-container">
-            <h3>Chat</h3>
-            <div id="chat-messaggi-lista">
-                </div>
-            <form id="chat-form">
-                <input id="chat-input" type="text" placeholder="Say something..." autocomplete="off">
-                <button type="submit">Send</button>
-            </form>
-        </div>
-    </div>
-    
-    <div id="contenitore-principale">
-
-        <div id="controlli-audio">
-            <div class="controllo-volume-gruppo">
-                <span id="icona-volume-musica" class="icona-volume">🎵</span>
-                <input type="range" id="slider-volume-musica" class="slider-volume" min="0" max="100" value="30">
-            </div>
-            <div class="controllo-volume-gruppo">
-                <span id="icona-volume-sfx" class="icona-volume">🔊</span>
-                <input type="range" id="slider-volume-sfx" class="slider-volume" min="0" max="100" value="80">
-            </div>
-        </div>
+    <div id="schermata-menu-principale">
         
         <h1 id="titolo-gioco">Cocorido</h1> 
-        
-        <h2 id="stato-connessione">Disconnected ❌</h2>
-        
-        <div id="zona-profilo-giocatore" style="display: none;">
-            <h3>Your Profile</h3>
-            <div class="profilo-nome-container">
-                <span id="profilo-nome-testo"></span>
-                <input type="text" id="profilo-nome-input" style="display: none;" />
-                <span id="profilo-edit-icon" class="profilo-edit-icon">✏️</span>
+
+        <div class="menu-container">
+            
+            <div class="menu-riga-principale">
+                <div class="menu-box" id="box-lobby-disponibili">
+                    <h3>Lobby Pubbliche</h3>
+                    <div id="lista-lobby-container">
+                        <p><i>(Funzionalità in arrivo...)</i></p>
+                    </div>
+                </div>
+
+                <div class="menu-box" id="box-unisciti-codice">
+                    <h3>Unisciti con Codice</h3>
+                    <p>Se hai un codice, inseriscilo qui per unirti ai tuoi amici.</p>
+                    <div class="input-gruppo">
+                        <input type="text" id="input-codice-lobby" placeholder="ABCDE" maxlength="5">
+                        <button id="btn-unisciti-codice">VAI</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="menu-riga-crea">
+                <button id="btn-mostra-crea-lobby">+ Crea Stanza</button>
+
+                <div class="menu-box" id="box-crea-lobby" style="display: none;">
+                    <h3>Crea una Stanza</h3>
+                    
+                    <label for="input-nome-stanza">Nome Stanza:</label>
+                    <input type="text" id="input-nome-stanza" placeholder="Es: 'Serata Epica'">
+                    
+                    <label for="input-max-giocatori">Max Giocatori:</label>
+                    <select id="input-max-giocatori">
+                        <option value="4">4</option>
+                        <option value="6">6</option>
+                        <option value="8" selected>8</option>
+                        <option value="10">10</option>
+                    </select>
+                    
+                    <button id="btn-crea-lobby">CREA</button>
+                </div>
+            </div>
+
+        </div> </div>
+    
+    
+    <div id="schermata-gioco" style="display: none;">
+    
+        <div id="zona-giocatori-sidebar">
+            <div id="lista-giocatori-container"></div>
+            
+            <div id="chat-container">
+                <h3>Chat</h3>
+                <div id="chat-messaggi-lista">
+                    </div>
+                <form id="chat-form">
+                    <input id="chat-input" type="text" placeholder="Say something..." autocomplete="off">
+                    <button type="submit">Send</button>
+                </form>
             </div>
         </div>
         
-        <div id="zona-lobby">
-            <h3>Lobby</h3>
-            <p id="lobby-conteggio">Waiting for players...</p>
-            <p id="lobby-attesa-host"></p>
-        </div>
+        <div id="contenitore-principale">
+            
+            <div id="controlli-audio">
+                <div class="controllo-volume-gruppo">
+                    <span id="icona-volume-musica" class="icona-volume">🎵</span>
+                    <input type="range" id="slider-volume-musica" class="slider-volume" min="0" max="100" value="30">
+                </div>
+                <div class="controllo-volume-gruppo">
+                    <span id="icona-volume-sfx" class="icona-volume">🔊</span>
+                    <input type="range" id="slider-volume-sfx" class="slider-volume" min="0" max="100" value="80">
+                </div>
 
-        <button id="btn-inizia" style="display: none;">START GAME</button>
-        <div id="area-messaggi"></div>
+                <div id="info-codice-lobby" style="display: none;">
+                    Codice: <b id="codice-lobby-display"></b>
+                    <span id="copia-codice-icon" title="Copia codice">📋</span>
+                </div>
+            </div>
 
-        <div id="area-gioco">
-            <div id="zona-master"></div>
-            <div id="zona-carta-nera">
-                <div class="carta-nera" id="testo-carta-nera"></div>
-                <p id="info-master"></p>
+            <h2 id="stato-connessione">Disconnected ❌</h2>
+            
+            <div id="zona-profilo-giocatore" style="display: none;">
+                <h3>Your Profile</h3>
+                <div class="profilo-nome-container">
+                    <span id="profilo-nome-testo"></span>
+                    <input type="text" id="profilo-nome-input" style="display: none;" />
+                    <span id="profilo-edit-icon" class="profilo-edit-icon">✏️</span>
+                </div>
             </div>
             
-            <div id="zona-carte-giocate"></div>
-            <button id="btn-attiva-scelta" style="display: none;">Choose Winner</button>
-            <div id="zona-mano-giocatore"></div>
-        </div>
+            <div id="zona-lobby">
+                <h3>Lobby</h3>
+                <p id="lobby-conteggio">Waiting for players...</p>
+                <p id="lobby-attesa-host"></p>
+            </div>
 
-    </div> 
+            <button id="btn-inizia" style="display: none;">START GAME</button>
+            <div id="area-messaggi"></div>
+
+            <div id="area-gioco">
+                <div id="zona-master"></div>
+                <div id="zona-carta-nera">
+                    <div class="carta-nera" id="testo-carta-nera"></div>
+                    <p id="info-master"></p>
+                </div>
+                
+                <div id="zona-carte-giocate"></div>
+                <button id="btn-attiva-scelta" style="display: none;">Choose Winner</button>
+                <div id="zona-mano-giocatore"></div>
+            </div>
+
+        </div> 
+    </div>
 
     <audio id="musica-sfondo" src="sound/background-music.mp3" loop></audio>
     <audio id="sfx-carta-girata" src="sound/card-flip.mp3" preload="auto"></audio>
@@ -81,14 +135,23 @@
     <script>
         const socket = io();
 
-        // Elementi HTML
+        // --- Elementi Comuni ---
         const statoConnessioneEl = document.getElementById('stato-connessione');
-        const btnInizia = document.getElementById('btn-inizia');
         const areaMessaggi = document.getElementById('area-messaggi');
-        const titoloGiocoEl = document.getElementById('titolo-gioco');
         
-        const contenitorePrincipale = document.getElementById('contenitore-principale');
-        
+        // --- Elementi Menu Principale ---
+        const schermataMenuPrincipale = document.getElementById('schermata-menu-principale');
+        const inputCodiceLobby = document.getElementById('input-codice-lobby');
+        const btnUniscitiCodice = document.getElementById('btn-unisciti-codice');
+        const inputNomeStanza = document.getElementById('input-nome-stanza');
+        const inputMaxGiocatori = document.getElementById('input-max-giocatori');
+        const btnCreaLobby = document.getElementById('btn-crea-lobby');
+        const btnMostraCreaLobby = document.getElementById('btn-mostra-crea-lobby'); // <-- NUOVO
+        const boxCreaLobby = document.getElementById('box-crea-lobby'); // <-- NUOVO
+
+        // --- Elementi Schermata Gioco ---
+        const schermataGioco = document.getElementById('schermata-gioco');
+        const btnInizia = document.getElementById('btn-inizia');
         const zonaMaster = document.getElementById('zona-master');
         const zonaCartaNera = document.getElementById('zona-carta-nera');
         const testoCartaNera = document.getElementById('testo-carta-nera');
@@ -100,39 +163,27 @@
         const lobbyConteggio = document.getElementById('lobby-conteggio');
         const lobbyAttesaHost = document.getElementById('lobby-attesa-host');
         const btnAttivaScelta = document.getElementById('btn-attiva-scelta');
+        const infoCodiceLobby = document.getElementById('info-codice-lobby');
+        const codiceLobbyDisplay = document.getElementById('codice-lobby-display');
+        const copiaCodiceIcon = document.getElementById('copia-codice-icon');
         
+        // --- Elementi Profilo (pre-partita) ---
         const zonaProfiloGiocatore = document.getElementById('zona-profilo-giocatore');
         const profiloNomeTesto = document.getElementById('profilo-nome-testo');
         const profiloEditIcon = document.getElementById('profilo-edit-icon');
         const profiloNomeInput = document.getElementById('profilo-nome-input');
         
+        // --- Elementi Chat ---
         const chatContainer = document.getElementById('chat-container');
         const chatForm = document.getElementById('chat-form');
         const chatInput = document.getElementById('chat-input');
         const chatMessaggiLista = document.getElementById('chat-messaggi-lista');
-
-        const musicaSfondo = document.getElementById('musica-sfondo');
-        const iconaVolumeMusica = document.getElementById('icona-volume-musica');
-        const sliderVolumeMusica = document.getElementById('slider-volume-musica');
-        
-        const iconaVolumeSfx = document.getElementById('icona-volume-sfx');
-        const sliderVolumeSfx = document.getElementById('slider-volume-sfx');
-        
-        // Audio SFX
-        const sfxCartaGirata = document.getElementById('sfx-carta-girata');
-        const sfxVincitore = document.getElementById('sfx-vincitore');
-        
-        // Stato volume 
-        let sfxVolume = sliderVolumeSfx.value / 100;
-        let sfxMuted = false;
         
 
-        // Stato locale
+        // --- Stato locale ---
         let mioRuolo = { isMaster: false };
-        let mioStato = { inAttesa: false }; 
         let listaGiocatoriLocale = []; 
         let masterCorrenteID = null;
-        
         let countdownInterval = null;
         
 
@@ -162,7 +213,7 @@
             profiloEditIcon.textContent = '✏️';
         }
 
-        // gestione connessione
+        // --- GESTIONE CONNESSIONE ---
         socket.on('connect', () => {
             statoConnessioneEl.style.display = 'none';
         });
@@ -171,6 +222,67 @@
             statoConnessioneEl.style.display = 'block';
             statoConnessioneEl.style.color = 'red';
         });
+
+        // -----------------------------------------------------------------
+        // 🚪 LOGICA MENU E LOBBY (AGGIORNATA)
+        // -----------------------------------------------------------------
+
+        // Pulsante "+ Crea Stanza"
+        btnMostraCreaLobby.addEventListener('click', () => {
+            boxCreaLobby.style.display = 'block';
+            btnMostraCreaLobby.style.display = 'none';
+        });
+
+        // Pulsante "CREA" (dentro il form)
+        btnCreaLobby.addEventListener('click', () => {
+            const nomeStanza = inputNomeStanza.value || "Stanza senza nome";
+            const maxGiocatori = parseInt(inputMaxGiocatori.value, 10);
+            
+            socket.emit('crea-lobby', { 
+                nome: nomeStanza, 
+                maxGiocatori: maxGiocatori 
+            });
+        });
+
+        // Pulsante "VAI" (per unione con codice)
+        btnUniscitiCodice.addEventListener('click', () => {
+            const codice = inputCodiceLobby.value.trim().toUpperCase();
+            if (codice.length === 5) {
+                socket.emit('unisciti-con-codice', codice);
+            } else {
+                alert("Il codice deve essere di 5 caratteri.");
+            }
+        });
+        
+        socket.on('unito-alla-lobby', (datiLobby) => {
+            console.log("Unito alla lobby!", datiLobby);
+            
+            // 1. Cambia schermata
+            schermataMenuPrincipale.style.display = 'none';
+            schermataGioco.style.display = 'flex'; // Usiamo flex per far funzionare sidebar e main
+
+            // 2. Mostra il codice lobby
+            infoCodiceLobby.style.display = 'block';
+            codiceLobbyDisplay.textContent = datiLobby.codice;
+        });
+        
+        socket.on('errore-lobby', (messaggio) => {
+            alert(messaggio); // Mostra errori (es. "Lobby piena", "Codice non trovato")
+        });
+
+        copiaCodiceIcon.addEventListener('click', () => {
+            const codice = codiceLobbyDisplay.textContent;
+            navigator.clipboard.writeText(codice).then(() => {
+                alert(`Codice "${codice}" copiato!`);
+            }, () => {
+                alert('Impossibile copiare il codice.');
+            });
+        });
+
+
+        // -----------------------------------------------------------------
+        // 👤 GESTIONE PROFILO E PARTITA
+        // -----------------------------------------------------------------
 
         btnInizia.addEventListener('click', () => {
             socket.emit('inizia-partita');
@@ -189,7 +301,6 @@
                 cartaDiv.className = 'carta-scelta';
                 cartaDiv.onclick = () => {
                     const testoScelto = cartaDiv.dataset.testo;
-                    console.log("Master has chosen:", testoScelto);
                     socket.emit('scegli-vincitore', testoScelto); 
                     zonaCarteGiocate.innerHTML = `<p style="font-size: 1.5em; color: green;">You chose! Announcing winner...</p>`;
                 };
@@ -216,7 +327,7 @@
             }
         });
         
-        // gestione lista giocatori
+        // --- GESTIONE LISTA GIOCATORI ---
         socket.on('aggiorna-lista-giocatori', (data) => {
             const { giocatori, hostID, partitaInCorso } = data;
             listaGiocatoriLocale = giocatori; 
@@ -256,7 +367,6 @@
 
             if (!partitaInCorso) {
                 zonaLobby.style.display = 'block';
-                titoloGiocoEl.style.display = 'block';
                 
                 if (mioDato) {
                     zonaProfiloGiocatore.style.display = 'block';
@@ -277,9 +387,9 @@
                     lobbyAttesaHost.textContent = `Waiting for ${nomeHost} to start the game.`;
                 }
             } else {
+                // Se la partita è in corso...
                 zonaLobby.style.display = 'none';
                 zonaProfiloGiocatore.style.display = 'none'; 
-                titoloGiocoEl.style.display = 'none';
                 btnInizia.style.display = 'none';
                 
                 if (mioDato && mioDato.inAttesa) {
@@ -290,7 +400,9 @@
             }
         });
 
-        // logica di gioco
+        // -----------------------------------------------------------------
+        // 🃏 LOGICA DI GIOCO (Rimane quasi invariata sul client)
+        // -----------------------------------------------------------------
         socket.on('nuovo-turno', (dati) => {
             if (countdownInterval) clearInterval(countdownInterval);
             
@@ -298,7 +410,6 @@
             
             zonaLobby.style.display = 'none'; 
             zonaProfiloGiocatore.style.display = 'none'; 
-            titoloGiocoEl.style.display = 'none';
             btnInizia.style.display = 'none';
             areaMessaggi.innerHTML = '';
             zonaManoGiocatore.innerHTML = ''; 
@@ -328,6 +439,7 @@
                 zonaManoGiocatore.style.display = 'flex'; 
             }
         });
+        
         socket.on('aggiorna-mano', (mano) => { 
             zonaManoGiocatore.innerHTML = ''; 
             if (mano.length === 0) {
@@ -351,7 +463,6 @@
         });
         
         socket.on('inizia-fase-rivelazione', (data) => {
-            console.log("Starting reveal phase, there are", data.numCarte, "cards");
             zonaManoGiocatore.innerHTML = '';
             zonaManoGiocatore.style.display = 'none';
             zonaCarteGiocate.innerHTML = '';
@@ -371,7 +482,6 @@
         });
 
         socket.on('sei-pronto-a-rivelare', () => {
-            console.log("Ready to reveal (by clicking cards)");
             zonaMaster.textContent = "Reveal the cards by clicking them!";
             zonaMaster.style.display = 'block';
             
@@ -379,7 +489,6 @@
             carteCoperte.forEach(cartaDiv => {
                 cartaDiv.classList.add('cliccabile');
                 cartaDiv.onclick = () => {
-                    console.log("Master clicked card index:", cartaDiv.dataset.index);
                     socket.emit('rivolgi-carta', { index: cartaDiv.dataset.index });
                     cartaDiv.onclick = null;
                     cartaDiv.classList.remove('cliccabile');
@@ -388,7 +497,7 @@
         });
 
         socket.on('carta-rivelata', (data) => {
-            console.log("Card revealed:", data.index, data.testoCarta);
+            playSfx(sfxCartaGirata); 
             
             const cartaDaRivelare = zonaCarteGiocate.querySelector(`.carta-coperta[data-index="${data.index}"]`);
             
@@ -404,13 +513,11 @@
         });
 
         socket.on('attendi-scelta-finale', () => {
-            console.log("All cards revealed, waiting for Master's choice");
             zonaMaster.textContent = "All cards revealed. Waiting for the Master's choice.";
             zonaMaster.style.display = 'block';
         });
 
         socket.on('mostra-pulsante-scegli', () => {
-            console.log("All cards revealed, showing 'Choose' button");
             zonaMaster.textContent = "All cards are revealed! Press the button to decide.";
             zonaMaster.style.display = 'block';
             btnAttivaScelta.style.display = 'block';
@@ -439,6 +546,7 @@
                 messaggio = "You won this round! You are the new Master.";
                 zonaMaster.style.borderColor = "var(--colore-master)";
                 zonaMaster.style.color = "var(--colore-giocatore-ha-giocato)";
+                playSfx(sfxVincitore);
             } else {
                 messaggio = `Player ${nomeVincitore} won! They are the next Master.`; 
                 zonaMaster.style.borderColor = "var(--colore-master)";
@@ -464,7 +572,9 @@
             }, 1000);
         });
         
-        // logica della chat
+        // -----------------------------------------------------------------
+        // 💬 Logica della Chat
+        // -----------------------------------------------------------------
         
         chatForm.addEventListener('submit', (e) => {
             e.preventDefault(); 
@@ -488,7 +598,7 @@
                 nomeSpan.className = 'nome';
                 nomeSpan.textContent = `${data.nome}: `;
                 
-                if (data.nome === getNomeGiocatore(socket.id)) {
+                if (data.id === socket.id) {
                     msgDiv.classList.add('tu');
                 }
                 
@@ -501,82 +611,92 @@
             }
             
             chatMessaggiLista.appendChild(msgDiv);
-            
             chatMessaggiLista.scrollTop = chatMessaggiLista.scrollHeight; 
         });
 
 
-        // logica audio
+        // -----------------------------------------------------------------
+        // 🔊 LOGICA AUDIO (Invariata)
+        // -----------------------------------------------------------------
+        
+        const musicaSfondo = document.getElementById('musica-sfondo');
+        const iconaVolumeMusica = document.getElementById('icona-volume-musica');
+        const sliderVolumeMusica = document.getElementById('slider-volume-musica');
+        const iconaVolumeSfx = document.getElementById('icona-volume-sfx');
+        const sliderVolumeSfx = document.getElementById('slider-volume-sfx');
+        const sfxCartaGirata = document.getElementById('sfx-carta-girata');
+        const sfxVincitore = document.getElementById('sfx-vincitore');
+        
+        let sfxVolume = sliderVolumeSfx.value / 100;
+        let sfxMuted = false;
 
         musicaSfondo.volume = sliderVolumeMusica.value / 100;
+        
+        function avviaMusicaAlPrimoClick() {
+            musicaSfondo.play().catch(e => {
+                console.warn("Avvio automatico musica bloccato.", e);
+            });
+            document.body.removeEventListener('click', avviaMusicaAlPrimoClick);
+        }
+        document.body.addEventListener('click', avviaMusicaAlPrimoClick, { once: true });
 
-    function avviaMusicaAlPrimoClick() {
-        musicaSfondo.play().catch(e => {
-            console.warn("Avvio automatico musica bloccato.", e);
+        sliderVolumeMusica.addEventListener('input', () => {
+            const volumeVal = sliderVolumeMusica.value / 100;
+            musicaSfondo.volume = volumeVal;
+            if (volumeVal > 0) {
+                musicaSfondo.muted = false;
+            }
+            aggiornaIconaMusica();
         });
-        document.body.removeEventListener('click', avviaMusicaAlPrimoClick);
-    }
-    document.body.addEventListener('click', avviaMusicaAlPrimoClick, { once: true });
 
-    sliderVolumeMusica.addEventListener('input', () => {
-        const volumeVal = sliderVolumeMusica.value / 100;
-        musicaSfondo.volume = volumeVal;
-        if (volumeVal > 0) {
-            musicaSfondo.muted = false;
+        iconaVolumeMusica.addEventListener('click', () => {
+            musicaSfondo.muted = !musicaSfondo.muted;
+            aggiornaIconaMusica();
+        });
+
+        function aggiornaIconaMusica() {
+            if (musicaSfondo.muted || musicaSfondo.volume === 0) {
+                iconaVolumeMusica.textContent = '🔇';
+                if (musicaSfondo.volume === 0) sliderVolumeMusica.value = 0;
+            } else {
+                iconaVolumeMusica.textContent = '🎵';
+                sliderVolumeMusica.value = musicaSfondo.volume * 100;
+            }
         }
-        aggiornaIconaMusica();
-    });
 
-    iconaVolumeMusica.addEventListener('click', () => {
-        musicaSfondo.muted = !musicaSfondo.muted;
-        aggiornaIconaMusica();
-    });
-
-    function aggiornaIconaMusica() {
-        if (musicaSfondo.muted || musicaSfondo.volume === 0) {
-            iconaVolumeMusica.textContent = '🔇';
-            if (musicaSfondo.volume === 0) sliderVolumeMusica.value = 0;
-        } else {
-            iconaVolumeMusica.textContent = '🎵';
-            sliderVolumeMusica.value = musicaSfondo.volume * 100;
+        function playSfx(audioElement) {
+            if (sfxMuted || sfxVolume === 0) return;
+            audioElement.volume = sfxVolume;
+            audioElement.currentTime = 0;
+            audioElement.play().catch(e => console.warn("SFX play failed", e));
         }
-    }
 
-    // gestione effetti sonori (SFX)
+        sliderVolumeSfx.addEventListener('input', () => {
+            sfxVolume = sliderVolumeSfx.value / 100;
+            if (sfxVolume > 0) {
+                sfxMuted = false;
+            }
+            aggiornaIconaSfx();
+        });
 
-    function playSfx(audioElement) {
-        if (sfxMuted || sfxVolume === 0) return; 
-        audioElement.volume = sfxVolume;
-        audioElement.currentTime = 0; 
-        audioElement.play().catch(e => console.warn("SFX play failed", e));
-    }
+        iconaVolumeSfx.addEventListener('click', () => {
+            sfxMuted = !sfxMuted;
+            aggiornaIconaSfx();
+        });
 
-    sliderVolumeSfx.addEventListener('input', () => {
-        sfxVolume = sliderVolumeSfx.value / 100;
-        if (sfxVolume > 0) {
-            sfxMuted = false;
-        }   
-        aggiornaIconaSfx();
-    });
-
-    // Icona Mute SFX
-    iconaVolumeSfx.addEventListener('click', () => {
-        sfxMuted = !sfxMuted;
-        aggiornaIconaSfx();
-    });
-
-    function aggiornaIconaSfx() {
-        if (sfxMuted || sfxVolume === 0) {
-            iconaVolumeSfx.textContent = '🔇';
-            if (sfxVolume === 0) sliderVolumeSfx.value = 0;
-        } else if (sfxVolume < 0.5) {
-            iconaVolumeSfx.textContent = '🔉';
-            sliderVolumeSfx.value = sfxVolume * 100;
-        } else {
-            iconaVolumeSfx.textContent = '🔊';
-            sliderVolumeSfx.value = sfxVolume * 100;
+        function aggiornaIconaSfx() {
+            if (sfxMuted || sfxVolume === 0) {
+                iconaVolumeSfx.textContent = '🔇';
+                if (sfxVolume === 0) sliderVolumeSfx.value = 0;
+            } else if (sfxVolume < 0.5) {
+                iconaVolumeSfx.textContent = '🔉';
+                sliderVolumeSfx.value = sfxVolume * 100;
+            } else {
+                iconaVolumeSfx.textContent = '🔊';
+                sliderVolumeSfx.value = sfxVolume * 100;
+            }
         }
-    }
+
     </script>
 
 </body>
