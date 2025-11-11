@@ -6,7 +6,6 @@ import {
 let sfxVolume = sliderVolumeSfx.value / 100;
 let sfxMuted = false;
 
-// Funzione helper per suonare un SFX (esportata per l'uso in game.js)
 export function playSfx(audioElement) {
     if (sfxMuted || sfxVolume === 0) return;
     audioElement.volume = sfxVolume;
@@ -44,7 +43,6 @@ function aggiornaIconaSfx() {
     }
 }
 
-// Funzione di inizializzazione che aggiunge i listener
 export function initAudio() {
     musicaSfondo.volume = sliderVolumeMusica.value / 100;
     document.body.addEventListener('click', avviaMusicaAlPrimoClick, { once: true });

@@ -1,7 +1,6 @@
 import { socket } from './socket.js';
-import * as ui from './ui.js'; // Importa tutto da ui.js
+import * as ui from './ui.js'; 
 
-// Funzione di inizializzazione
 export function initMenu() {
     ui.btnMostraCreaLobby.addEventListener('click', () => {
         ui.boxCreaLobby.style.display = 'block';
@@ -37,7 +36,6 @@ export function initMenu() {
     });
 }
 
-// Handler per le lobby pubbliche
 export function handleAggiornaLobbyPubbliche(listaLobby) {
     ui.listaLobbyContainer.innerHTML = ''; 
     
@@ -68,7 +66,6 @@ export function handleAggiornaLobbyPubbliche(listaLobby) {
     });
 }
 
-// Handler per l'unione a una lobby
 export function handleUnitoAllaLobby(datiLobby) {
     ui.schermataMenuPrincipale.style.display = 'none';
     ui.schermataGioco.style.display = 'flex'; 
@@ -77,7 +74,6 @@ export function handleUnitoAllaLobby(datiLobby) {
     ui.codiceLobbyDisplay.textContent = datiLobby.codice;
 }
 
-// Handler per errori lobby
 export function handleErroreLobby(messaggio) {
     alert(messaggio); 
 }

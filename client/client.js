@@ -1,7 +1,6 @@
 import { socket } from './socket.js';
 import { statoConnessioneEl } from './ui.js';
 
-// Importa le funzioni di inizializzazione
 import { initAudio } from './audio.js';
 import { initChat, handleNuovoMessaggioChat } from './chat.js';
 import { initMenu, handleAggiornaLobbyPubbliche, handleUnitoAllaLobby, handleErroreLobby } from './menu.js';
@@ -12,14 +11,11 @@ import {
     handleMostraPulsanteScegli, handleAnnunciaVincitore
 } from './game.js';
 
-// --- INIZIALIZZAZIONE ---
-// Aggiunge i listener agli eventi (click, submit)
 initAudio();
 initChat();
 initMenu();
 initGame();
 
-// --- GESTIONE CONNESSIONE SOCKET.IO ---
 socket.on('connect', () => {
     statoConnessioneEl.style.display = 'none';
 });
@@ -29,18 +25,12 @@ socket.on('disconnect', () => {
     statoConnessioneEl.style.color = 'red';
 });
 
-// --- GESTIONE EVENTI DAL SERVER ---
-// Assegna ogni evento socket.on alla funzione handler corretta
-
-// Menu & Lobby
 socket.on('aggiorna-lobby-pubbliche', handleAggiornaLobbyPubbliche);
 socket.on('unito-alla-lobby', handleUnitoAllaLobby);
 socket.on('errore-lobby', handleErroreLobby);
 
-// Chat
 socket.on('nuovo-messaggio-chat', handleNuovoMessaggioChat);
 
-// Gioco
 socket.on('errore', handleErrore);
 socket.on('aggiorna-lista-giocatori', handleAggiornaListaGiocatori);
 socket.on('nuovo-turno', handleNuovoTurno);

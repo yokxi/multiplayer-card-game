@@ -1,7 +1,6 @@
 import { socket } from './socket.js';
 import { chatForm, chatInput, chatMessaggiLista } from './ui.js';
 
-// Funzione di inizializzazione
 export function initChat() {
     chatForm.addEventListener('submit', (e) => {
         e.preventDefault(); 
@@ -14,7 +13,6 @@ export function initChat() {
     });
 }
 
-// Handler per i messaggi in arrivo
 export function handleNuovoMessaggioChat(data) {
     const msgDiv = document.createElement('div');
     msgDiv.className = 'messaggio-chat';

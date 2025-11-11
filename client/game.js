@@ -1,8 +1,7 @@
 import { socket } from './socket.js';
 import * as ui from './ui.js';
-import { playSfx } from './audio.js'; // Importa la funzione per suonare SFX
+import { playSfx } from './audio.js'; 
 
-// Stato locale del gioco
 let stato = {
     mioRuolo: { isMaster: false },
     listaGiocatoriLocale: [], 
@@ -10,7 +9,6 @@ let stato = {
     countdownInterval: null
 };
 
-// --- Funzioni Profilo ---
 function attivaModificaNome() {
     ui.profiloNomeTesto.style.display = 'none';
     ui.profiloNomeInput.style.display = 'inline-block';
@@ -32,7 +30,6 @@ function salvaModificaNome() {
     ui.profiloEditIcon.textContent = '✏️';
 }
 
-// --- Funzione di Inizializzazione ---
 export function initGame() {
     ui.btnInizia.addEventListener('click', () => {
         socket.emit('inizia-partita');
@@ -69,7 +66,6 @@ export function initGame() {
     });
 }
 
-// --- Gestori di Eventi Socket.IO ---
 
 export function handleErrore(messaggio) {
     ui.areaMessaggi.innerHTML = `<p style="color: red;">${messaggio}</p>`;

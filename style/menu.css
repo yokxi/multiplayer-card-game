@@ -94,7 +94,6 @@
     flex-grow: 0; 
 }
 
-/* Stili form */
 .menu-box label {
     display: block;
     font-weight: bold;
@@ -127,7 +126,6 @@
     background-color: var(--colore-btn-start-hover);
 }
 
-/* Stile join con codice */
 .input-gruppo {
     display: flex;
     gap: 10px;
@@ -147,7 +145,6 @@
     margin-top: 0;
 }
 
-/* Stile codice lobby (in game) */
 #info-codice-lobby {
     background: var(--colore-sfondo-messaggio);
     border: 1px solid var(--colore-master);
@@ -171,8 +168,6 @@
 }
 #copia-codice-icon:hover { opacity: 1; }
 
-
-/* ▼▼▼ QUESTO È IL BLOCCO CHE CREA IL LAYOUT CORRETTO ▼▼▼ */
 #lista-lobby-container {
     width: 100%;
     max-height: 250px; 
@@ -188,9 +183,9 @@
 }
 
 .lobby-item {
-    display: flex; /* <-- USA FLEXBOX PER ALLINEARE */
-    align-items: center; /* Allinea verticalmente */
-    justify-content: space-between; /* Spinge il nome a sx e il bottone a dx */
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between;
     padding: 10px;
     border-bottom: 1px solid var(--colore-elemento-sidebar);
 }
@@ -200,27 +195,26 @@
 
 .lobby-item-info {
     font-size: 1.1em;
-    color: var(--colore-testo-scuro); /* <-- Assicura che il testo sia scuro */
+    color: var(--colore-testo-scuro); 
     
-    flex-grow: 1; /* Occupa tutto lo spazio possibile */
-    white-space: nowrap; /* Non manda il testo a capo */
-    overflow: hidden; /* Nasconde il testo che sborda */
-    text-overflow: ellipsis; /* Aggiunge "..." se il nome è lungo */
-    margin-right: 10px; /* Spazio prima del bottone */
+    flex-grow: 1; 
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    margin-right: 10px; 
 }
 .lobby-item-info strong {
-    color: var(--colore-testo-profilo); /* <-- Assicura che il nome sia blu */
+    color: var(--colore-testo-profilo); 
 }
 
 .lobby-item-join-btn {
-    font-size: 0.9em; /* Bottone piccolo */
+    font-size: 0.9em; 
     padding: 8px 12px;
     margin-top: 0; 
-    width: auto; /* Larghezza automatica */
+    width: auto; 
     background-color: var(--colore-giocatore-ha-giocato);
-    flex-shrink: 0; /* Impedisce al bottone di rimpicciolirsi */
+    flex-shrink: 0; 
 }
 .lobby-item-join-btn:hover {
     background-color: #38A169;
 }
-/* ▲▲▲ FINE BLOCCO CSS ▲▲▲ */
