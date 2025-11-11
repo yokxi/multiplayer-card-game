@@ -51,6 +51,11 @@
                         <option value="10">10</option>
                     </select>
                     
+                    <div class="input-gruppo-check">
+                        <input type="checkbox" id="input-lobby-privata">
+                        <label for="input-lobby-privata">Make this lobby private</label>
+                    </div>
+                    
                     <button id="btn-crea-lobby">CREATE</button>
                 </div>
             </div>
@@ -97,6 +102,11 @@
                     Code: <b id="codice-lobby-display"></b>
                     <span id="copia-codice-icon" title="Copy code">📋</span>
                 </div>
+
+                <div id="impostazione-privacy-lobby" style="display: none;">
+                    <input type="checkbox" id="toggle-lobby-privata">
+                    <label for="toggle-lobby-privata">Lobby is Private</label>
+                </div>
             </div>
 
             <h2 id="stato-connessione">Disconnected ❌</h2>
@@ -139,8 +149,7 @@
     <audio id="sfx-vincitore" src="sound/win-round.mp3" preload="auto"></audio>
     
     <script src="/socket.io/socket.io.js"></script>
-    
     <script src="client/client.js" type="module"></script>
-    
-    </body>
+
+</body>
 </html>

@@ -12,6 +12,7 @@ export const inputMaxGiocatori = document.getElementById('input-max-giocatori');
 export const btnCreaLobby = document.getElementById('btn-crea-lobby');
 export const btnMostraCreaLobby = document.getElementById('btn-mostra-crea-lobby');
 export const boxCreaLobby = document.getElementById('box-crea-lobby');
+export const inputLobbyPrivata = document.getElementById('input-lobby-privata'); 
 
 // --- Elementi Schermata Gioco ---
 export const schermataGioco = document.getElementById('schermata-gioco');
@@ -31,6 +32,8 @@ export const btnAttivaScelta = document.getElementById('btn-attiva-scelta');
 export const infoCodiceLobby = document.getElementById('info-codice-lobby');
 export const codiceLobbyDisplay = document.getElementById('codice-lobby-display');
 export const copiaCodiceIcon = document.getElementById('copia-codice-icon');
+export const impostazionePrivacyLobby = document.getElementById('impostazione-privacy-lobby'); // <-- AGGIUNTO
+export const toggleLobbyPrivata = document.getElementById('toggle-lobby-privata'); // <-- AGGIUNTO
 
 // --- Elementi Profilo ---
 export const zonaProfiloGiocatore = document.getElementById('zona-profilo-giocatore');

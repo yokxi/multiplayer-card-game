@@ -94,6 +94,7 @@
     flex-grow: 0; 
 }
 
+/* Stili form */
 .menu-box label {
     display: block;
     font-weight: bold;
@@ -126,6 +127,7 @@
     background-color: var(--colore-btn-start-hover);
 }
 
+/* Stile join con codice */
 .input-gruppo {
     display: flex;
     gap: 10px;
@@ -145,6 +147,7 @@
     margin-top: 0;
 }
 
+/* Stile codice lobby (in game) */
 #info-codice-lobby {
     background: var(--colore-sfondo-messaggio);
     border: 1px solid var(--colore-master);
@@ -168,6 +171,8 @@
 }
 #copia-codice-icon:hover { opacity: 1; }
 
+
+/* Stili per la lista lobby */
 #lista-lobby-container {
     width: 100%;
     max-height: 250px; 
@@ -183,8 +188,8 @@
 }
 
 .lobby-item {
-    display: flex; 
-    align-items: center; 
+    display: flex;
+    align-items: center;
     justify-content: space-between;
     padding: 10px;
     border-bottom: 1px solid var(--colore-elemento-sidebar);
@@ -195,8 +200,7 @@
 
 .lobby-item-info {
     font-size: 1.1em;
-    color: var(--colore-testo-scuro); 
-    
+    color: var(--colore-testo-scuro);
     flex-grow: 1; 
     white-space: nowrap; 
     overflow: hidden; 
@@ -204,11 +208,11 @@
     margin-right: 10px; 
 }
 .lobby-item-info strong {
-    color: var(--colore-testo-profilo); 
+    color: var(--colore-testo-profilo);
 }
 
 .lobby-item-join-btn {
-    font-size: 0.9em; 
+    font-size: 0.9em;
     padding: 8px 12px;
     margin-top: 0; 
     width: auto; 
@@ -217,4 +221,41 @@
 }
 .lobby-item-join-btn:hover {
     background-color: #38A169;
+}
+
+/* Stile per checkbox "Make Private" (nel form) */
+.input-gruppo-check {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+}
+.input-gruppo-check input[type="checkbox"] {
+    width: auto; 
+    margin-right: 10px;
+}
+.input-gruppo-check label {
+    margin: 0; 
+    font-weight: normal;
+    font-size: 0.9em;
+}
+
+/* Stile per il toggle privacy (SOTTO il codice) */
+#impostazione-privacy-lobby {
+    background: var(--colore-sfondo-messaggio);
+    border: 1px solid var(--colore-master);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.9em;
+    text-align: center;
+    margin-top: 5px; 
+    color: var(--colore-testo-scuro);
+    width: 100%; 
+    box-sizing: border-box;
+    display: none; /* Nascosto di default, mostrato da game.js */
+}
+#impostazione-privacy-lobby input {
+    margin-right: 5px;
+}
+#impostazione-privacy-lobby label {
+    cursor: pointer;
 }

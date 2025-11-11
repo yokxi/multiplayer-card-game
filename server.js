@@ -10,14 +10,15 @@ app.use(express.static(__dirname));
 app.use('/style', express.static(__dirname + '/style'));
 app.use('/img', express.static(__dirname + '/img')); 
 app.use('/sound', express.static(__dirname + '/sound'));
+app.use('/client', express.static(__dirname + '/client')); 
 
 // --- Deck Loading ---
 const carteNereBase = require('./decks/black_cards.json');
 const carteBiancheBase = require('./decks/white_cards.json');
 
 // --- ROOM MANAGER ---
-let stanze = new Map(); // 'stanze' (rooms) stores the full game state
-let lobbyPubbliche = new Map(); // 'lobbyPubbliche' stores data for the menu
+let stanze = new Map(); 
+let lobbyPubbliche = new Map(); 
 
 // --- Game Constants ---
 const MAX_CARTE_MANO = 7;
@@ -68,10 +69,13 @@ function aggiornaStatoLobby(codice) {
     const stanza = stanze.get(codice);
     if (!stanza) return;
 
-    const lobbyPub = lobbyPubbliche.get(codice);
-    if (lobbyPub) {
-        lobbyPub.numGiocatori = stanza.giocatori.length;
-        broadcastListaLobby();
+    // Aggiorna la lista pubblica SOLO SE la lobby è pubblica
+    if (!stanza.isPrivate) {
+        const lobbyPub = lobbyPubbliche.get(codice);
+        if (lobbyPub) {
+            lobbyPub.numGiocatori = stanza.giocatori.length;
+            broadcastListaLobby();
+        }
     }
 
     io.to(codice).emit('aggiorna-lista-giocatori', {
@@ -85,7 +89,8 @@ function aggiornaStatoLobby(codice) {
         hostID: stanza.hostID,
         partitaInCorso: stanza.partitaInCorso,
         maxGiocatori: stanza.maxGiocatori, 
-        numGiocatori: stanza.giocatori.length 
+        numGiocatori: stanza.giocatori.length,
+        isPrivate: stanza.isPrivate // <-- Invia lo stato di privacy
     });
 }
 
@@ -195,10 +200,8 @@ io.on('connection', (socket) => {
 
     socket.on('crea-lobby', (dati) => {
         const codice = generaCodiceLobby();
-        
-        // ▼▼▼ MODIFICA QUI ▼▼▼
-        const nomeStanza = dati.nome.substring(0, 20); // Limita a 20 caratteri
-        // ▲▲▲ FINE MODIFICA ▲▲▲
+        const nomeStanza = dati.nome.substring(0, 20); 
+        const isPrivate = dati.isPrivate || false; 
 
         const host = {
             id: socket.id,
@@ -211,8 +214,9 @@ io.on('connection', (socket) => {
 
         const nuovaStanza = {
             codice: codice,
-            nome: nomeStanza, // Usa il nome limitato
+            nome: nomeStanza, 
             maxGiocatori: dati.maxGiocatori,
+            isPrivate: isPrivate, 
             hostID: socket.id,
             giocatori: [host],
             partitaInCorso: false,
@@ -226,12 +230,15 @@ io.on('connection', (socket) => {
 
         stanze.set(codice, nuovaStanza);
 
-        lobbyPubbliche.set(codice, {
-            codice: codice,
-            nome: nomeStanza, // Usa il nome limitato
-            numGiocatori: 1,
-            maxGiocatori: dati.maxGiocatori
-        });
+        if (!isPrivate) {
+            lobbyPubbliche.set(codice, {
+                codice: codice,
+                nome: nomeStanza, 
+                numGiocatori: 1,
+                maxGiocatori: dati.maxGiocatori
+            });
+            broadcastListaLobby();
+        }
         
         socket.join(codice);
         socket.stanzaCorrente = codice;
@@ -240,7 +247,7 @@ io.on('connection', (socket) => {
         socket.emit('unito-alla-lobby', { codice: codice, nome: nomeStanza });
         
         aggiornaStatoLobby(codice); 
-        console.log(`User ${socket.id} created lobby ${codice}`);
+        console.log(`User ${socket.id} created lobby ${codice} (Private: ${isPrivate})`);
     });
 
     socket.on('unisciti-con-codice', (codice) => {
@@ -279,7 +286,36 @@ io.on('connection', (socket) => {
     });
 
 
-    // --- GAME LOGIC (Room-aware) ---
+    socket.on('toggle-lobby-privacy', (isPrivate) => {
+        const codice = socket.stanzaCorrente;
+        if (!codice) return;
+        const stanza = stanze.get(codice);
+        if (!stanza) return;
+        if (socket.id !== stanza.hostID) {
+            return; 
+        }
+
+        stanza.isPrivate = isPrivate;
+
+        if (isPrivate) {
+            if (lobbyPubbliche.has(codice)) {
+                lobbyPubbliche.delete(codice);
+                broadcastListaLobby();
+            }
+        } else {
+            lobbyPubbliche.set(codice, {
+                codice: codice,
+                nome: stanza.nome,
+                numGiocatori: stanza.giocatori.length,
+                maxGiocatori: stanza.maxGiocatori
+            });
+            broadcastListaLobby();
+        }
+
+        inviaMessaggioChatSistema(codice, `The host made the lobby ${isPrivate ? 'private' : 'public'}.`);
+        aggiornaStatoLobby(codice); 
+    });
+
 
     socket.on('imposta-nome', (nuovoNome) => {
         const codice = socket.stanzaCorrente;
@@ -442,20 +478,20 @@ io.on('connection', (socket) => {
 
         if (stanza.giocatori.length === 0) {
             stanze.delete(codice);
-            lobbyPubbliche.delete(codice); 
-            broadcastListaLobby(); 
+            if (lobbyPubbliche.has(codice)) {
+                lobbyPubbliche.delete(codice); 
+                broadcastListaLobby(); 
+            }
             console.log(`Lobby ${codice} is empty and has been deleted.`);
             return;
         }
         
-        // ▼▼▼ LOGICA ASSEGNAZIONE NUOVO HOST (già presente) ▼▼▼
         if (socket.id === stanza.hostID) {
             stanza.hostID = stanza.giocatori[0].id; 
             inviaMessaggioChatSistema(codice, `${nomeDisconnesso} (Host) disconnected. ${stanza.giocatori[0].nome} is now the host.`);
         } else {
             inviaMessaggioChatSistema(codice, `${nomeDisconnesso} has left the lobby.`);
         }
-        // ▲▲▲ FINE LOGICA HOST ▲▲▲
 
         if (stanza.partitaInCorso) {
             if (socket.id === stanza.masterCorrenteID) {

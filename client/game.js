@@ -30,6 +30,7 @@ function salvaModificaNome() {
     ui.profiloEditIcon.textContent = '✏️';
 }
 
+// --- Funzione di Inizializzazione ---
 export function initGame() {
     ui.btnInizia.addEventListener('click', () => {
         socket.emit('inizia-partita');
@@ -64,6 +65,11 @@ export function initGame() {
             salvaModificaNome();
         }
     });
+
+    ui.toggleLobbyPrivata.addEventListener('change', () => {
+        const isPrivate = ui.toggleLobbyPrivata.checked;
+        socket.emit('toggle-lobby-privacy', isPrivate);
+    });
 }
 
 
@@ -72,7 +78,7 @@ export function handleErrore(messaggio) {
 }
 
 export function handleAggiornaListaGiocatori(data) {
-    const { giocatori, hostID, partitaInCorso, maxGiocatori, numGiocatori } = data; 
+    const { giocatori, hostID, partitaInCorso, maxGiocatori, numGiocatori, isPrivate } = data; 
     
     ui.sidebarLobbyConteggio.textContent = `${numGiocatori} / ${maxGiocatori}`;
 
@@ -110,6 +116,13 @@ export function handleAggiornaListaGiocatori(data) {
     });
     
     const mioDato = giocatori.find(g => g.id === socket.id);
+
+    if (socket.id === hostID) {
+        ui.impostazionePrivacyLobby.style.display = 'block';
+        ui.toggleLobbyPrivata.checked = isPrivate; 
+    } else {
+        ui.impostazionePrivacyLobby.style.display = 'none';
+    }
 
     if (!partitaInCorso) {
         ui.zonaLobby.style.display = 'block';
