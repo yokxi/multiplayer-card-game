@@ -112,10 +112,10 @@
     box-sizing: border-box;
 }
 .menu-box button {
-    width: 26%;
+    width: 30%;
     font-size: 1.2em;
-    padding: 5px;
-    margin-top: 5px;
+    padding: 8px;
+    margin-top: 8px;
     cursor: pointer;
     background-color: var(--colore-btn-start-bg);
     color: var(--colore-btn-start-testo); 
@@ -227,7 +227,7 @@
 .input-gruppo-check {
     display: flex;
     align-items: center;
-    margin-top: 20px;
+    margin-top: 13px;
 }
 .input-gruppo-check input[type="checkbox"] {
     width: auto; 
