@@ -112,10 +112,10 @@
     box-sizing: border-box;
 }
 .menu-box button {
-    width: 100%;
+    width: 26%;
     font-size: 1.2em;
-    padding: 12px;
-    margin-top: 20px;
+    padding: 5px;
+    margin-top: 5px;
     cursor: pointer;
     background-color: var(--colore-btn-start-bg);
     color: var(--colore-btn-start-testo); 
@@ -239,7 +239,6 @@
     font-size: 0.9em;
 }
 
-/* Stile per il toggle privacy (SOTTO il codice) */
 #impostazione-privacy-lobby {
     background: var(--colore-sfondo-messaggio);
     border: 1px solid var(--colore-master);
@@ -251,7 +250,7 @@
     color: var(--colore-testo-scuro);
     width: 100%; 
     box-sizing: border-box;
-    display: none; /* Nascosto di default, mostrato da game.js */
+    display: none; 
 }
 #impostazione-privacy-lobby input {
     margin-right: 5px;
