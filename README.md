@@ -35,7 +35,7 @@ To run this project on your own computer:
 1.  **Clone the repository:**
 
     ```bash
-    git clone [https://github.com/yokxi/multiplayer-card-game.git](https://github.com/yokxi/multiplayer-card-game.git)
+    git clone https://github.com/yokxi/multiplayer-card-game.git
     cd multiplayer-card-game
     ```
 
@@ -54,31 +54,6 @@ To run this project on your own computer:
 
 4.  **Play!**
     Open your browser and go to `http://localhost:3000`. Open multiple tabs or incognito windows to simulate multiple players.
-
----
-
-## 🌎 How to Play with Friends (Online)
-
-`localhost:3000` only works on your own computer. To play with friends in different locations, you must deploy the server online.
-
-### Option 1: Quick Test (ngrok)
-
-You can use a service like [ngrok](https://ngrok.com/) to temporarily expose your `localhost` to the internet.
-
-1.  Start your server (`node server.js`).
-2.  In a *second* terminal, run `ngrok http 3000`.
-3.  Send the `httpss://...ngrok-free.app` URL to your friends.
-    *(Note: This only works while your computer is on and ngrok is running).*
-
-### Option 2: Full Deployment (Free Hosting)
-
-For a permanent, 24/7 link, you can deploy this project to a free hosting service like [Render.com](https://render.com/).
-
-1.  Push your project to this GitHub repository.
-2.  Create a new "Web Service" on Render.
-3.  Connect your GitHub account and select this repository.
-4.  Render will automatically detect the `package.json` and use `npm install` and `node server.js` to start it.
-5.  Render will give you a public URL (e.g., `cocorido.onrender.com`) that you can share with anyone!
 
 ---
 
