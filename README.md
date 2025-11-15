@@ -4,6 +4,11 @@ This is a real-time multiplayer web game inspired by the popular Italian game "C
 
 It's built from scratch using Node.js, Express, and Socket.io, allowing multiple players to join a game lobby, play rounds, and score points, all in real-time.
 
+## 🚀 Live Demo
+
+**You can play the live version here:**
+**[https://multiplayer-card-game-hkqb.onrender.com](https://multiplayer-card-game-hkqb.onrender.com)**
+
 ## ✨ Features
 
 * **Real-time Multiplayer:** Uses Socket.io to keep all players in sync.
